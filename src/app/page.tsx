@@ -1,0 +1,445 @@
+"use client";
+import { useState, useEffect } from "react";
+import Carousel from "@/app/components/Carousel";
+import SermonTile from "@/app/components/SermonTile";
+import VideoTile from "@/app/components/VideoTile";
+import BookTile from "@/app/components/BookTile";
+import EventTile from "@/app/components/EventTile";
+import { db } from "@/lib/firebase";
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+
+interface Sermon {
+  id: string;
+  title: string;
+  date: string;
+  preacher: string;
+  imageUrl: string;
+  audioUrl: string;
+  language: string;
+  category: string;
+}
+
+interface Video {
+  id: string;
+  title: string;
+  date: string;
+  preacher: string;
+  youtubeId: string;
+  youtubeLink: string;
+}
+
+interface Book {
+  id: string;
+  title: string;
+  author: string;
+  language: string;
+  coverImageUrl: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  description: string;
+  isOneDay: boolean;
+  startDate: string;
+  endDate: string;
+  eventImageUrl: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  imageUrl?: string;
+}
+
+export default function Home() {
+  const [sermons, setSermons] = useState<Sermon[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoadingSermons, setIsLoadingSermons] = useState(true);
+  const [isLoadingVideos, setIsLoadingVideos] = useState(true);
+  const [isLoadingBooks, setIsLoadingBooks] = useState(true);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check network connectivity
+    if (!navigator.onLine) {
+      console.error("No internet connection. Please check your network.");
+      return;
+    }
+
+    if (!db) {
+      setIsLoadingSermons(false);
+      setIsLoadingVideos(false);
+      setIsLoadingBooks(false);
+      setIsLoadingEvents(false);
+      setIsLoadingCategories(false);
+      return;
+    }
+
+    console.log("Network status:", navigator.onLine ? "Online" : "Offline");
+    console.log("User agent:", navigator.userAgent);
+
+    fetchSermons();
+    fetchVideos();
+    fetchBooks();
+    fetchEvents();
+    fetchCategories();
+  }, []);
+
+  const fetchSermons = async () => {
+    if (!db) return;
+    try {
+      console.log("Fetching sermons from Firestore...");
+      console.log("Firebase config:", { projectId: "edchurch-6ea6c" });
+
+      const sermonsQuery = query(
+        collection(db, "sermons"),
+        orderBy("createdAt", "desc"),
+        limit(4)
+      );
+
+      const querySnapshot = await getDocs(sermonsQuery);
+      console.log("Sermons query result:", querySnapshot.docs.length, "documents");
+
+      const sermonsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Sermon[];
+
+      console.log("Processed sermons data:", sermonsData);
+      setSermons(sermonsData);
+    } catch (error: any) {
+      console.error("Error fetching sermons:", error);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
+
+      // Show user-friendly error message
+      if (error.code === 'permission-denied') {
+        console.error("Firebase permission denied. Check security rules.");
+      } else if (error.code === 'unavailable') {
+        console.error("Firebase service unavailable. Check network connection.");
+      }
+    } finally {
+      setIsLoadingSermons(false);
+    }
+  };
+
+  const fetchVideos = async () => {
+    if (!db) return;
+    try {
+      console.log("Fetching videos from Firestore...");
+      const videosQuery = query(
+        collection(db, "videos"),
+        orderBy("createdAt", "desc"),
+        limit(4)
+      );
+
+      const querySnapshot = await getDocs(videosQuery);
+      console.log("Videos query result:", querySnapshot.docs.length, "documents");
+
+      const videosData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Video[];
+
+      console.log("Processed videos data:", videosData);
+      setVideos(videosData);
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+    } finally {
+      setIsLoadingVideos(false);
+    }
+  };
+
+  const fetchBooks = async () => {
+    if (!db) return;
+    try {
+      console.log("Fetching books from Firestore...");
+      const booksQuery = query(
+        collection(db, "books"),
+        orderBy("createdAt", "desc"),
+        limit(4)
+      );
+
+      const querySnapshot = await getDocs(booksQuery);
+      console.log("Books query result:", querySnapshot.docs.length, "documents");
+
+      const booksData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Book[];
+
+      console.log("Processed books data:", booksData);
+      setBooks(booksData);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    } finally {
+      setIsLoadingBooks(false);
+    }
+  };
+
+  const fetchEvents = async () => {
+    if (!db) return;
+    try {
+      const eventsQuery = query(
+        collection(db, "events"),
+        orderBy("startDate", "asc")
+      );
+      const querySnapshot = await getDocs(eventsQuery);
+      const eventsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Event[];
+      // Custom sort: upcoming/ongoing first, over last
+      const now = new Date();
+      const upcomingOrOngoing = eventsData.filter(e => new Date(e.endDate) >= now);
+      const over = eventsData.filter(e => new Date(e.endDate) < now);
+      // Sort upcoming/ongoing by soonest startDate
+      upcomingOrOngoing.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      // Sort over by most recent endDate last
+      over.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      const sortedEvents = [...upcomingOrOngoing, ...over];
+      setEvents(sortedEvents.slice(0, 4));
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setIsLoadingEvents(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    if (!db) return;
+    try {
+      const querySnapshot = await getDocs(collection(db, "categories"));
+      const categoriesData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Category[];
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setIsLoadingCategories(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Hero Section: Full viewport height */}
+      <section className="relative min-h-screen flex items-center justify-center p-0 m-0 -mt-16">
+        <div className="absolute inset-0 z-0">
+          <Carousel />
+        </div>
+        {/* You can add overlay text/logo here if needed */}
+      </section>
+
+      {/* Latest Sermons */}
+      <section className="container mx-auto mt-4">
+        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Latest Sermons</h2>
+        {isLoadingSermons || isLoadingCategories ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="bg-gray-200 rounded-lg h-64 animate-pulse"></div>
+            ))}
+          </div>
+        ) : sermons.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+              {sermons.map((sermon) => {
+                const cat = categories.find(c => c.name === sermon.category);
+                return (
+                  <SermonTile
+                    key={sermon.id}
+                    id={sermon.id}
+                    image={cat?.imageUrl || ""}
+                    title={sermon.title}
+                    date={sermon.date}
+                    preacher={sermon.preacher}
+                    audioUrl={sermon.audioUrl}
+                    language={sermon.language}
+                    category={sermon.category}
+                  />
+                );
+              })}
+            </div>
+            <div className="flex justify-center mt-6">
+              <a href="/listen" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+                More Sermons
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No sermons available yet.</p>
+          </div>
+        )}
+      </section>
+
+      {/* Latest Videos */}
+      <section className="relative py-12 mt-8" style={{ backgroundColor: '#1a1a1a' }}>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a1a1a] via-[#1a1a1a] to-transparent" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 10%, #1a1a1a 30%, #1a1a1a 70%, transparent 90%, transparent 100%)' }}></div>
+        <div className="container mx-auto relative z-10">
+          <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Latest Videos</h2>
+        {isLoadingVideos ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="bg-gray-200 rounded-lg h-64 animate-pulse"></div>
+            ))}
+          </div>
+        ) : videos.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+              {videos.map((video) => (
+                <div key={video.id} className="relative">
+                  {playingVideoId === video.id ? (
+                    <div className="w-full h-64 flex items-center justify-center bg-black rounded-lg overflow-hidden">
+                      <iframe
+                        className="w-full h-full min-h-[16rem] rounded-lg"
+                        src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`}
+                        title={video.title}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                      <button
+                        className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-2 z-20 hover:bg-black/80"
+                        onClick={() => setPlayingVideoId(null)}
+                        aria-label="Close Video"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <VideoTile
+                      id={video.id}
+                      thumbnail={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                      title={video.title}
+                      date={video.date}
+                      preacher={video.preacher}
+                      youtubeId={video.youtubeId}
+                      onPlay={() => setPlayingVideoId(video.id)}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-center mt-6">
+              <a href="/watch" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+                More Videos
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No videos available yet.</p>
+          </div>
+        )}
+        </div>
+      </section>
+
+      {/* Latest Books */}
+      <section className="container mx-auto mt-8">
+        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Latest Books</h2>
+        {isLoadingBooks ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="bg-gray-200 rounded-lg h-64 animate-pulse"></div>
+            ))}
+          </div>
+        ) : books.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+              {books.map((book) => (
+                <BookTile
+                  key={book.id}
+                  cover={book.coverImageUrl}
+                  title={book.title}
+                  author={book.author}
+                  language={book.language}
+                />
+              ))}
+            </div>
+            <div className="flex justify-center mt-6">
+              <a href="/read" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+                More Books
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No books available yet.</p>
+          </div>
+        )}
+      </section>
+
+      {/* Upcoming Events */}
+      <section className="container mx-auto mt-8">
+        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Upcoming Events</h2>
+        {isLoadingEvents ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            {[...Array(4)].map((_, index) => (
+              <div key={index} className="bg-gray-200 rounded-lg h-64 animate-pulse"></div>
+            ))}
+          </div>
+        ) : events.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+              {events.map((event) => (
+                <EventTile
+                  key={event.id}
+                  id={event.id}
+                  title={event.title}
+                  startDate={event.startDate}
+                  endDate={event.endDate}
+                  isOneDay={event.isOneDay}
+                  image={event.eventImageUrl}
+                />
+              ))}
+            </div>
+            <div className="flex justify-center mt-6">
+              <a href="/attend" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+                More Events
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No events available yet.</p>
+          </div>
+        )}
+      </section>
+
+      {/* CTA */}
+      <div className="bg-black text-white py-20 mt-12">
+        <div className="container mx-auto text-center">
+          <h2 className="text-5xl font-bold mb-8 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>Want to know more or connect with us?</h2>
+          <a href="/contact" className="bg-black text-white px-10 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-gray-800 transition inline-block flex items-center gap-3 mx-auto">
+            Contact Us
+            <svg className="w-6 h-6 animate-bounce ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
