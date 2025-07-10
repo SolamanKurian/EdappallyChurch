@@ -72,9 +72,9 @@ export default function WatchPage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-12 sm:px-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-0 sm:px-0">
             {paginated.map((video) => (
-              <div key={video.id} className="relative">
+              <div key={video.id} className="w-[95vw] sm:w-full mx-auto">
                 {playingVideoId === video.id ? (
                   <div className="w-full h-64 flex items-center justify-center bg-black rounded-lg overflow-hidden">
                     <iframe

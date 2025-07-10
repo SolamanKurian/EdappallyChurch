@@ -240,7 +240,7 @@ export default function Home() {
 
       {/* Latest Sermons */}
       <section className="container mx-auto mt-4">
-        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Latest Sermons</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left font-serif tracking-wide">Latest Sermons</h2>
         {isLoadingSermons || isLoadingCategories ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
             {[...Array(4)].map((_, index) => (
@@ -249,26 +249,27 @@ export default function Home() {
           </div>
         ) : sermons.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-0 sm:px-0">
               {sermons.map((sermon) => {
                 const cat = categories.find(c => c.name === sermon.category);
                 return (
-                  <SermonTile
-                    key={sermon.id}
-                    id={sermon.id}
-                    image={cat?.imageUrl || ""}
-                    title={sermon.title}
-                    date={sermon.date}
-                    preacher={sermon.preacher}
-                    audioUrl={sermon.audioUrl}
-                    language={sermon.language}
-                    category={sermon.category}
-                  />
+                  <div key={sermon.id} className="w-[95vw] sm:w-full mx-auto">
+                    <SermonTile
+                      id={sermon.id}
+                      image={cat?.imageUrl || ""}
+                      title={sermon.title}
+                      date={sermon.date}
+                      preacher={sermon.preacher}
+                      audioUrl={sermon.audioUrl}
+                      language={sermon.language}
+                      category={sermon.category}
+                    />
+                  </div>
                 );
               })}
             </div>
             <div className="flex justify-center mt-6">
-              <a href="/listen" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+              <a href="/listen" className="text-yellow-700 font-normal px-6 py-2 rounded-lg shadow-md hover:bg-yellow-100 transition flex items-center gap-2 bg-transparent border border-yellow-700">
                 More Sermons
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -287,7 +288,7 @@ export default function Home() {
       <section className="relative py-12 mt-8" style={{ backgroundColor: '#1a1a1a' }}>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a1a1a] via-[#1a1a1a] to-transparent" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 10%, #1a1a1a 30%, #1a1a1a 70%, transparent 90%, transparent 100%)' }}></div>
         <div className="container mx-auto relative z-10">
-          <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Latest Videos</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center sm:text-left font-serif tracking-wide">Latest Videos</h2>
         {isLoadingVideos ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
             {[...Array(4)].map((_, index) => (
@@ -296,9 +297,9 @@ export default function Home() {
           </div>
         ) : videos.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-0 sm:px-0">
               {videos.map((video) => (
-                <div key={video.id} className="relative">
+                <div key={video.id} className="w-[95vw] sm:w-full mx-auto">
                   {playingVideoId === video.id ? (
                     <div className="w-full h-64 flex items-center justify-center bg-black rounded-lg overflow-hidden">
                       <iframe
@@ -334,7 +335,7 @@ export default function Home() {
               ))}
             </div>
             <div className="flex justify-center mt-6">
-              <a href="/watch" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+              <a href="/watch" className="text-yellow-700 font-normal px-6 py-2 rounded-lg shadow-md hover:bg-yellow-100 transition flex items-center gap-2 bg-transparent border border-yellow-700">
                 More Videos
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -352,7 +353,7 @@ export default function Home() {
 
       {/* Latest Books */}
       <section className="container mx-auto mt-8">
-        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Latest Books</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left font-serif tracking-wide">Latest Books</h2>
         {isLoadingBooks ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
             {[...Array(4)].map((_, index) => (
@@ -361,19 +362,20 @@ export default function Home() {
           </div>
         ) : books.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-0 sm:px-0">
               {books.map((book) => (
-                <BookTile
-                  key={book.id}
-                  cover={book.coverImageUrl}
-                  title={book.title}
-                  author={book.author}
-                  language={book.language}
-                />
+                <div key={book.id} className="w-[95vw] sm:w-full mx-auto">
+                  <BookTile
+                    cover={book.coverImageUrl}
+                    title={book.title}
+                    author={book.author}
+                    language={book.language}
+                  />
+                </div>
               ))}
             </div>
             <div className="flex justify-center mt-6">
-              <a href="/read" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+              <a href="/read" className="text-yellow-700 font-normal px-6 py-2 rounded-lg shadow-md hover:bg-yellow-100 transition flex items-center gap-2 bg-transparent border border-yellow-700">
                 More Books
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -390,7 +392,7 @@ export default function Home() {
 
       {/* Upcoming Events */}
       <section className="container mx-auto mt-8">
-        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">Upcoming Events</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center sm:text-left font-serif tracking-wide">Upcoming Events</h2>
         {isLoadingEvents ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
             {[...Array(4)].map((_, index) => (
@@ -399,21 +401,22 @@ export default function Home() {
           </div>
         ) : events.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-12 sm:px-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-0 sm:px-0">
               {events.map((event) => (
-                <EventTile
-                  key={event.id}
-                  id={event.id}
-                  title={event.title}
-                  startDate={event.startDate}
-                  endDate={event.endDate}
-                  isOneDay={event.isOneDay}
-                  image={event.eventImageUrl}
-                />
+                <div key={event.id} className="w-[95vw] sm:w-full mx-auto">
+                  <EventTile
+                    id={event.id}
+                    title={event.title}
+                    startDate={event.startDate}
+                    endDate={event.endDate}
+                    isOneDay={event.isOneDay}
+                    image={event.eventImageUrl}
+                  />
+                </div>
               ))}
             </div>
             <div className="flex justify-center mt-6">
-              <a href="/attend" className="bg-black text-white px-6 py-2 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition flex items-center gap-2">
+              <a href="/attend" className="text-yellow-700 font-normal px-6 py-2 rounded-lg shadow-md hover:bg-yellow-100 transition flex items-center gap-2 bg-transparent border border-yellow-700">
                 More Events
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -432,11 +435,8 @@ export default function Home() {
       <div className="bg-black text-white py-20 mt-12">
         <div className="container mx-auto text-center">
           <h2 className="text-5xl font-bold mb-8 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>Want to know more or connect with us?</h2>
-          <a href="/contact" className="bg-black text-white px-10 py-4 rounded-lg text-xl font-semibold shadow-lg hover:bg-gray-800 transition inline-block flex items-center gap-3 mx-auto">
+          <a href="/contact" className="text-yellow-700 font-normal px-10 py-4 rounded-lg text-xl shadow-lg hover:bg-yellow-100 transition inline-block flex items-center gap-3 mx-auto">
             Contact Us
-            <svg className="w-6 h-6 animate-bounce ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
           </a>
         </div>
       </div>

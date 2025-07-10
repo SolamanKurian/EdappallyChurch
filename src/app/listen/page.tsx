@@ -145,24 +145,25 @@ export default function ListenPage() {
         </select>
       </div>
       {/* Sermon Tiles Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-12 sm:px-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-0 sm:px-0">
         {paginated.length === 0 ? (
           <div className="col-span-full text-center text-gray-500">No sermons found.</div>
         ) : (
           paginated.map((sermon) => {
             const cat = categories.find(c => c.name === sermon.category);
             return (
-              <SermonTile
-                key={sermon.id}
-                id={sermon.id}
-                image={cat?.imageUrl || ""}
-                title={sermon.title}
-                date={sermon.date}
-                preacher={sermon.preacher}
-                audioUrl={sermon.audioUrl}
-                language={sermon.language}
-                category={sermon.category}
-              />
+              <div key={sermon.id} className="w-[95vw] sm:w-full mx-auto">
+                <SermonTile
+                  id={sermon.id}
+                  image={cat?.imageUrl || ""}
+                  title={sermon.title}
+                  date={sermon.date}
+                  preacher={sermon.preacher}
+                  audioUrl={sermon.audioUrl}
+                  language={sermon.language}
+                  category={sermon.category}
+                />
+              </div>
             );
           })
         )}

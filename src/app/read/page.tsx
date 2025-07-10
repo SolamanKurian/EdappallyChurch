@@ -97,18 +97,19 @@ export default function ReadPage() {
         </select>
       </div>
       {/* Books Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-12 sm:px-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-0 sm:px-0">
         {paginated.length === 0 ? (
           <div className="col-span-full text-center text-gray-500">No books found.</div>
         ) : (
           paginated.map((book) => (
-            <BookTile
-              key={book.id}
-              cover={book.coverImageUrl}
-              title={book.title}
-              author={book.author}
-              language={book.language}
-            />
+            <div key={book.id} className="w-[95vw] sm:w-full mx-auto">
+              <BookTile
+                cover={book.coverImageUrl}
+                title={book.title}
+                author={book.author}
+                language={book.language}
+              />
+            </div>
           ))
         )}
       </div>
