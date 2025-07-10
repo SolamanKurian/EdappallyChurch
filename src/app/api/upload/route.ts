@@ -19,19 +19,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Validate file type - only allow audio files
-    if (!file.type.startsWith('audio/')) {
+    // Validate file type - allow both audio and image files
+    const isAudio = file.type.startsWith('audio/');
+    const isImage = file.type.startsWith('image/');
+    
+    if (!isAudio && !isImage) {
       return NextResponse.json({ 
-        error: 'Only audio files are allowed.' 
+        error: 'Only audio or image files are allowed.' 
       }, { status: 400 });
     }
 
-    // Prefer MP3 format but allow other audio formats
-    const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/aac'];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ 
-        error: 'Only MP3, WAV, M4A, and AAC audio files are supported.' 
-      }, { status: 400 });
+    // For audio, check allowed types
+    if (isAudio) {
+      const allowedAudioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/aac'];
+      if (!allowedAudioTypes.includes(file.type)) {
+        return NextResponse.json({ 
+          error: 'Only MP3, WAV, M4A, and AAC audio files are supported.' 
+        }, { status: 400 });
+      }
+    }
+
+    // For images, check allowed types
+    if (isImage) {
+      const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedImageTypes.includes(file.type)) {
+        return NextResponse.json({ 
+          error: 'Only JPEG, PNG, GIF, and WebP image files are supported.' 
+        }, { status: 400 });
+      }
     }
 
     console.log('=== UPLOAD DEBUG ===');
@@ -100,3 +115,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
