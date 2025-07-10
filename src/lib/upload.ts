@@ -50,7 +50,7 @@ export const uploadToCloudinary = async (file: File, folder: string = 'church-up
     // Handle specific error types
     if (error instanceof Error) {
       if (error.message.includes('413') || error.message.includes('too large')) {
-        throw new Error('File too large. Please use a smaller file (max 50MB).');
+        throw new Error('File too large. Please use a smaller file (max 25MB).');
       }
       if (error.message.includes('timeout')) {
         throw new Error('Upload timeout. Please try again.');

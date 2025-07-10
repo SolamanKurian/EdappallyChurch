@@ -65,10 +65,10 @@ export default function AddSermonPage() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Validate file size (50MB limit)
-      const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+      // Validate file size (25MB limit for Hobby plan)
+      const maxSize = 25 * 1024 * 1024; // 25MB in bytes
       if (file.size > maxSize) {
-        setError("File too large. Please select a file smaller than 50MB.");
+        setError("File too large. Please select a file smaller than 25MB.");
         setAudioFile(null);
         if (audioInputRef.current) audioInputRef.current.value = "";
         return;
@@ -274,7 +274,7 @@ export default function AddSermonPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Audio File * (Max 50MB)
+                Audio File * (Max 25MB)
               </label>
               <input
                 type="file"
@@ -292,7 +292,7 @@ export default function AddSermonPage() {
                 </div>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                Supported formats: MP3, WAV, M4A, AAC (Max 50MB)
+                Supported formats: MP3, WAV, M4A, AAC (Max 25MB)
               </p>
             </div>
 

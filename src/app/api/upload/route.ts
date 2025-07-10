@@ -13,9 +13,9 @@ export async function POST(request: NextRequest) {
   try {
     // Check content length
     const contentLength = request.headers.get('content-length');
-    if (contentLength && parseInt(contentLength) > 50 * 1024 * 1024) { // 50MB limit
+    if (contentLength && parseInt(contentLength) > 25 * 1024 * 1024) { // Reduced to 25MB for Hobby plan
       return NextResponse.json({ 
-        error: 'File too large. Maximum size is 50MB.' 
+        error: 'File too large. Maximum size is 25MB.' 
       }, { status: 413 });
     }
 
@@ -27,10 +27,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Check file size
-    if (file.size > 50 * 1024 * 1024) { // 50MB limit
+    // Check file size - reduced for Hobby plan
+    if (file.size > 25 * 1024 * 1024) { // 25MB limit
       return NextResponse.json({ 
-        error: 'File too large. Maximum size is 50MB.' 
+        error: 'File too large. Maximum size is 25MB.' 
       }, { status: 413 });
     }
 
@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
         {
           resource_type: 'auto',
           folder: folder,
-          // Remove audio-specific settings that might cause issues
         },
         (error, result) => {
           if (error) {
@@ -81,7 +80,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error) {
       if (error.message.includes('413') || error.message.includes('Request Entity Too Large')) {
         return NextResponse.json({ 
-          error: 'File too large. Maximum size is 50MB.' 
+          error: 'File too large. Maximum size is 25MB.' 
         }, { status: 413 });
       }
       

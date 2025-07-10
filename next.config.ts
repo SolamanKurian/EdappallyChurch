@@ -20,9 +20,9 @@ const nextConfig: NextConfig = {
   generateEtags: false,
   api: {
     bodyParser: {
-      sizeLimit: '50mb',
+      sizeLimit: '25mb',
     },
-    responseLimit: '50mb',
+    responseLimit: '25mb',
   },
 };
 
