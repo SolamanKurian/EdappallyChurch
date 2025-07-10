@@ -49,14 +49,20 @@ export const uploadToCloudinary = async (file: File, folder: string = 'church-up
     
     // Handle specific error types
     if (error instanceof Error) {
-      if (error.message.includes('413') || error.message.includes('too large')) {
-        throw new Error('File too large. Please use a smaller file (max 25MB).');
+      if (error.message.includes('413') || error.message.includes('Request Entity Too Large')) {
+        throw new Error('File too large for serverless function. Please try a smaller file or contact support.');
       }
       if (error.message.includes('timeout')) {
         throw new Error('Upload timeout. Please try again.');
       }
       if (error.message.includes('Request En')) {
         throw new Error('Upload failed. Please try again with a smaller file.');
+      }
+      if (error.message.includes('Only audio files')) {
+        throw new Error('Only audio files are allowed. Please select a valid audio file.');
+      }
+      if (error.message.includes('Only MP3, WAV, M4A, and AAC')) {
+        throw new Error('Only MP3, WAV, M4A, and AAC audio files are supported.');
       }
     }
     

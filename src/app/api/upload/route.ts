@@ -11,14 +11,6 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
-    // Check content length
-    const contentLength = request.headers.get('content-length');
-    if (contentLength && parseInt(contentLength) > 25 * 1024 * 1024) { // Reduced to 25MB for Hobby plan
-      return NextResponse.json({ 
-        error: 'File too large. Maximum size is 25MB.' 
-      }, { status: 413 });
-    }
-
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const folder = formData.get('folder') as string || 'church-uploads';
@@ -27,11 +19,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Check file size - reduced for Hobby plan
-    if (file.size > 25 * 1024 * 1024) { // 25MB limit
+    // Validate file type - only allow audio files
+    if (!file.type.startsWith('audio/')) {
       return NextResponse.json({ 
-        error: 'File too large. Maximum size is 25MB.' 
-      }, { status: 413 });
+        error: 'Only audio files are allowed.' 
+      }, { status: 400 });
+    }
+
+    // Prefer MP3 format but allow other audio formats
+    const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/aac'];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ 
+        error: 'Only MP3, WAV, M4A, and AAC audio files are supported.' 
+      }, { status: 400 });
     }
 
     console.log('=== UPLOAD DEBUG ===');
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error) {
       if (error.message.includes('413') || error.message.includes('Request Entity Too Large')) {
         return NextResponse.json({ 
-          error: 'File too large. Maximum size is 25MB.' 
+          error: 'File too large for serverless function. Please try a smaller file or contact support.' 
         }, { status: 413 });
       }
       

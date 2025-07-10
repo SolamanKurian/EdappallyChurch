@@ -65,18 +65,18 @@ export default function AddSermonPage() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Validate file size (25MB limit for Hobby plan)
-      const maxSize = 25 * 1024 * 1024; // 25MB in bytes
-      if (file.size > maxSize) {
-        setError("File too large. Please select a file smaller than 25MB.");
+      // Validate file type - only allow audio files
+      if (!file.type.startsWith('audio/')) {
+        setError("Please select a valid audio file.");
         setAudioFile(null);
         if (audioInputRef.current) audioInputRef.current.value = "";
         return;
       }
       
-      // Validate file type
-      if (!file.type.startsWith('audio/')) {
-        setError("Please select a valid audio file.");
+      // Validate specific audio formats
+      const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/aac'];
+      if (!allowedTypes.includes(file.type)) {
+        setError("Only MP3, WAV, M4A, and AAC audio files are supported.");
         setAudioFile(null);
         if (audioInputRef.current) audioInputRef.current.value = "";
         return;
@@ -274,11 +274,11 @@ export default function AddSermonPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Audio File * (Max 25MB)
+                Audio File * (MP3, WAV, M4A, AAC)
               </label>
               <input
                 type="file"
-                accept="audio/*"
+                accept="audio/mpeg,audio/mp3,audio/wav,audio/m4a,audio/aac"
                 onChange={handleAudioChange}
                 ref={audioInputRef}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
@@ -292,7 +292,7 @@ export default function AddSermonPage() {
                 </div>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                Supported formats: MP3, WAV, M4A, AAC (Max 25MB)
+                Supported formats: MP3, WAV, M4A, AAC (No size limit)
               </p>
             </div>
 
