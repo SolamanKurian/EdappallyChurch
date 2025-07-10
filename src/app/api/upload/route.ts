@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     console.log('=== UPLOAD DEBUG ===');
     console.log('File received:', file.name, 'Size:', file.size, 'bytes');
     console.log('Content-Type:', file.type);
+    console.log('Folder:', folder);
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -48,9 +49,7 @@ export async function POST(request: NextRequest) {
         {
           resource_type: 'auto',
           folder: folder,
-          // Add audio-specific settings for better handling
-          audio_codec: 'aac',
-          audio_bitrate: '128k',
+          // Remove audio-specific settings that might cause issues
         },
         (error, result) => {
           if (error) {
@@ -102,13 +101,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// Configure the route to handle large files
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '50mb',
-    },
-    responseLimit: '50mb',
-  },
-};

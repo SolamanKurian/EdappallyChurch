@@ -63,7 +63,27 @@ export default function AddSermonPage() {
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setAudioFile(e.target.files[0]);
+      const file = e.target.files[0];
+      
+      // Validate file size (50MB limit)
+      const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+      if (file.size > maxSize) {
+        setError("File too large. Please select a file smaller than 50MB.");
+        setAudioFile(null);
+        if (audioInputRef.current) audioInputRef.current.value = "";
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('audio/')) {
+        setError("Please select a valid audio file.");
+        setAudioFile(null);
+        if (audioInputRef.current) audioInputRef.current.value = "";
+        return;
+      }
+      
+      setAudioFile(file);
+      setError(""); // Clear any previous errors
     }
   };
 
@@ -254,7 +274,7 @@ export default function AddSermonPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Audio File *
+                Audio File * (Max 50MB)
               </label>
               <input
                 type="file"
@@ -265,10 +285,15 @@ export default function AddSermonPage() {
                 required
               />
               {audioFile && (
-                <p className="text-sm text-gray-600 mt-1">
-                  Selected: {audioFile.name}
-                </p>
+                <div className="mt-2 text-sm text-gray-600">
+                  <p>Selected: {audioFile.name}</p>
+                  <p>Size: {(audioFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                  <p>Type: {audioFile.type}</p>
+                </div>
               )}
+              <p className="text-xs text-gray-500 mt-1">
+                Supported formats: MP3, WAV, M4A, AAC (Max 50MB)
+              </p>
             </div>
 
             <div className="flex gap-4">
