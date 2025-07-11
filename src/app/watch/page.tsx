@@ -29,14 +29,24 @@ export default function WatchPage() {
     try {
       const videosQuery = query(
         collection(db, "videos"),
-        orderBy("createdAt", "desc")
+        orderBy("date", "desc")
       );
       const querySnapshot = await getDocs(videosQuery);
       const videosData = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Video[];
-      setVideos(videosData);
+      
+      // Filter videos that are not in the future and sort by date
+      const currentDate = new Date();
+      const validVideos = videosData
+        .filter(video => {
+          const videoDate = new Date(video.date);
+          return videoDate <= currentDate;
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      setVideos(validVideos);
     } catch (error) {
       console.error("Error fetching videos:", error);
     } finally {

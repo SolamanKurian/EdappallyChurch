@@ -99,8 +99,8 @@ export default function Home() {
 
       const sermonsQuery = query(
         collection(db, "sermons"),
-        orderBy("createdAt", "desc"),
-        limit(4)
+        orderBy("date", "desc"),
+        limit(8)
       );
 
       const querySnapshot = await getDocs(sermonsQuery);
@@ -111,8 +111,18 @@ export default function Home() {
         ...doc.data()
       })) as Sermon[];
 
-      console.log("Processed sermons data:", sermonsData);
-      setSermons(sermonsData);
+      // Filter sermons that are not in the future and sort by date
+      const currentDate = new Date();
+      const validSermons = sermonsData
+        .filter(sermon => {
+          const sermonDate = new Date(sermon.date);
+          return sermonDate <= currentDate;
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 4);
+
+      console.log("Processed sermons data:", validSermons);
+      setSermons(validSermons);
     } catch (error: any) {
       console.error("Error fetching sermons:", error);
       console.error("Error code:", error.code);
@@ -135,8 +145,8 @@ export default function Home() {
       console.log("Fetching videos from Firestore...");
       const videosQuery = query(
         collection(db, "videos"),
-        orderBy("createdAt", "desc"),
-        limit(4)
+        orderBy("date", "desc"),
+        limit(8)
       );
 
       const querySnapshot = await getDocs(videosQuery);
@@ -147,8 +157,18 @@ export default function Home() {
         ...doc.data()
       })) as Video[];
 
-      console.log("Processed videos data:", videosData);
-      setVideos(videosData);
+      // Filter videos that are not in the future and sort by date
+      const currentDate = new Date();
+      const validVideos = videosData
+        .filter(video => {
+          const videoDate = new Date(video.date);
+          return videoDate <= currentDate;
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 4);
+
+      console.log("Processed videos data:", validVideos);
+      setVideos(validVideos);
     } catch (error) {
       console.error("Error fetching videos:", error);
     } finally {

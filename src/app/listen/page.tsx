@@ -42,7 +42,7 @@ export default function ListenPage() {
       console.log("Fetching sermons from Firestore...");
       const sermonsQuery = query(
         collection(db, "sermons"),
-        orderBy("createdAt", "desc")
+        orderBy("date", "desc")
       );
       
       const querySnapshot = await getDocs(sermonsQuery);
@@ -53,8 +53,17 @@ export default function ListenPage() {
         ...doc.data()
       })) as Sermon[];
       
-      console.log("Processed sermons data:", sermonsData);
-      setSermons(sermonsData);
+      // Filter sermons that are not in the future and sort by date
+      const currentDate = new Date();
+      const validSermons = sermonsData
+        .filter(sermon => {
+          const sermonDate = new Date(sermon.date);
+          return sermonDate <= currentDate;
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      console.log("Processed sermons data:", validSermons);
+      setSermons(validSermons);
     } catch (error) {
       console.error("Error fetching sermons:", error);
     } finally {

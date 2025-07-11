@@ -76,13 +76,32 @@ export default function Carousel() {
       {/* Text Overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center text-white px-8">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-wide drop-shadow-2xl" style={{ fontFamily: 'Georgia, serif' }}>
+          <h1 
+            className="text-5xl md:text-7xl font-bold mb-4 tracking-wide" 
+            style={{ 
+              fontFamily: 'Georgia, serif',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.6), 6px 6px 12px rgba(0,0,0,0.4)',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))'
+            }}
+          >
             {carouselContent[current].title}
           </h1>
-          <p className="text-xl md:text-2xl mb-2 italic drop-shadow-2xl">
+          <p 
+            className="text-xl md:text-2xl mb-2 italic"
+            style={{
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8), 4px 4px 8px rgba(0,0,0,0.6)',
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
+            }}
+          >
             "{carouselContent[current].verse}"
           </p>
-          <p className="text-lg md:text-xl font-semibold drop-shadow-2xl">
+          <p 
+            className="text-lg md:text-xl font-semibold"
+            style={{
+              textShadow: '1px 1px 3px rgba(0,0,0,0.8), 2px 2px 6px rgba(0,0,0,0.6)',
+              filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))'
+            }}
+          >
             {carouselContent[current].reference}
           </p>
         </div>
@@ -90,7 +109,13 @@ export default function Carousel() {
       
       {/* Animated Down Arrow */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center">
-        <div className="text-white drop-shadow-2xl">
+        <div 
+          className="text-white"
+          style={{
+            textShadow: '1px 1px 3px rgba(0,0,0,0.8), 2px 2px 6px rgba(0,0,0,0.6)',
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
+          }}
+        >
           <p className="text-lg mb-2">Scroll Down to Hear the Word Shared Recently</p>
           <div className="animate-bounce">
             <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">

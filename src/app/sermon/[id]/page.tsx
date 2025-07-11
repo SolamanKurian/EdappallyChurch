@@ -343,6 +343,87 @@ export default function SermonPlayerPage() {
               )}
             </button>
 
+            {/* Download and Share Buttons */}
+            <div className="flex gap-3 mt-4">
+              {/* Download Button */}
+              <button
+                onClick={() => {
+                  try {
+                    // Method 1: Try direct download with fetch
+                    fetch(sermon.audioUrl)
+                      .then(response => response.blob())
+                      .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `${sermon.title.replace(/[^a-zA-Z0-9]/g, '_')}.mp3`;
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                      })
+                      .catch(() => {
+                        // Method 2: Fallback to direct link download
+                        const link = document.createElement('a');
+                        link.href = sermon.audioUrl;
+                        link.download = `${sermon.title.replace(/[^a-zA-Z0-9]/g, '_')}.mp3`;
+                        link.target = '_blank';
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      });
+                  } catch (error) {
+                    // Method 3: Final fallback - open in new tab
+                    window.open(sermon.audioUrl, '_blank');
+                  }
+                }}
+                className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Download
+              </button>
+
+              {/* Share Button */}
+              <button
+                onClick={() => {
+                  const shareUrl = window.location.href;
+                  const shareText = `Listen to "${sermon.title}" by ${sermon.preacher}`;
+                  
+                  if (navigator.share) {
+                    // Use native sharing if available
+                    navigator.share({
+                      title: sermon.title,
+                      text: shareText,
+                      url: shareUrl,
+                    });
+                  } else {
+                    // Fallback to copying to clipboard
+                    navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`).then(() => {
+                      alert('Link copied to clipboard!');
+                    }).catch(() => {
+                      // Fallback for older browsers
+                      const textArea = document.createElement('textarea');
+                      textArea.value = `${shareText}\n\n${shareUrl}`;
+                      document.body.appendChild(textArea);
+                      textArea.select();
+                      document.execCommand('copy');
+                      document.body.removeChild(textArea);
+                      alert('Link copied to clipboard!');
+                    });
+                  }
+                }}
+                className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                </svg>
+                Share
+              </button>
+            </div>
 
           </div>
         </div>
