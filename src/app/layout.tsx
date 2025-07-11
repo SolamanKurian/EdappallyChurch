@@ -16,8 +16,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Church Website",
-  description: "Welcome to our church community",
+  title: "Edappally Pentecostal Church & Sanctuary Publications | Spirit-Filled Worship & Christian Publishing in Kochi",
+  description: "Edappally Pentecostal Church & Sanctuary Publications — a spirit-filled Christian church and gospel publishing ministry based in Kochi, Kerala. Join us for worship and explore our gospel resources.",
+  keywords: [
+    "Pentecostal Church Edappally",
+    "Edappally Church",
+    "Churches in Kochi",
+    "Spirit-Filled Worship",
+    "Kerala Pentecostal Churches",
+    "Christian Church Edappally",
+    "Sanctuary Church Edappally",
+    "Sanctuary Publications",
+    "Christian Publishers Edappally",
+    "Gospel Publications Kerala"
+  ]
 };
 
 export default function RootLayout({

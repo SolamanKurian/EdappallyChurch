@@ -248,6 +248,28 @@ export default function Home() {
     }
   };
 
+  // Helper for dd/mm/yyyy
+  function formatDateDDMMYYYY(dateString: string) {
+    // Robust dd/mm/yyyy output
+    let d;
+    if (dateString.includes('/')) {
+      // If already dd/mm/yyyy or mm/dd/yyyy, split and reorder
+      const parts = dateString.split('/');
+      if (parts[2].length === 4) {
+        // Assume dd/mm/yyyy or mm/dd/yyyy
+        d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+      } else {
+        d = new Date(dateString);
+      }
+    } else {
+      d = new Date(dateString);
+    }
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {/* Hero Section: Full viewport height */}
@@ -278,7 +300,7 @@ export default function Home() {
                       id={sermon.id}
                       image={cat?.imageUrl || ""}
                       title={sermon.title}
-                      date={sermon.date}
+                      date={formatDateDDMMYYYY(sermon.date)}
                       preacher={sermon.preacher}
                       audioUrl={sermon.audioUrl}
                       language={sermon.language}
@@ -345,7 +367,7 @@ export default function Home() {
                       id={video.id}
                       thumbnail={`https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`}
                       title={video.title}
-                      date={video.date}
+                      date={formatDateDDMMYYYY(video.date)}
                       preacher={video.preacher}
                       youtubeId={video.youtubeId}
                       onPlay={() => setPlayingVideoId(video.id)}
@@ -427,8 +449,8 @@ export default function Home() {
                   <EventTile
                     id={event.id}
                     title={event.title}
-                    startDate={event.startDate}
-                    endDate={event.endDate}
+                    startDate={formatDateDDMMYYYY(event.startDate)}
+                    endDate={formatDateDDMMYYYY(event.endDate)}
                     isOneDay={event.isOneDay}
                     image={event.eventImageUrl}
                   />

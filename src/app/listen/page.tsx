@@ -96,6 +96,28 @@ export default function ListenPage() {
     }
   };
 
+  // Helper for dd/mm/yyyy
+  function formatDateDDMMYYYY(dateString: string) {
+    // Robust dd/mm/yyyy output
+    let d;
+    if (dateString.includes('/')) {
+      // If already dd/mm/yyyy or mm/dd/yyyy, split and reorder
+      const parts = dateString.split('/');
+      if (parts[2].length === 4) {
+        // Assume dd/mm/yyyy or mm/dd/yyyy
+        d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+      } else {
+        d = new Date(dateString);
+      }
+    } else {
+      d = new Date(dateString);
+    }
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   // Filtered and paginated data
   const filtered = sermons.filter((s) => {
     const matchesCategory = category === "All" || s.category === category;
@@ -166,7 +188,7 @@ export default function ListenPage() {
                   id={sermon.id}
                   image={cat?.imageUrl || ""}
                   title={sermon.title}
-                  date={sermon.date}
+                  date={formatDateDDMMYYYY(sermon.date)}
                   preacher={sermon.preacher}
                   audioUrl={sermon.audioUrl}
                   language={sermon.language}

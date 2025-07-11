@@ -34,12 +34,24 @@ export default function SermonTile({
 
   // Format date for display
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    // Robust dd/mm/yyyy output
+    let d;
+    if (dateString.includes('/')) {
+      // If already dd/mm/yyyy or mm/dd/yyyy, split and reorder
+      const parts = dateString.split('/');
+      if (parts[2].length === 4) {
+        // Assume dd/mm/yyyy or mm/dd/yyyy
+        d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+      } else {
+        d = new Date(dateString);
+      }
+    } else {
+      d = new Date(dateString);
+    }
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
