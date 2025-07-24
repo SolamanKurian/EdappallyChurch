@@ -15,6 +15,7 @@
     "analyze": "ANALYZE=true npm run build"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.850.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "cloudinary": "^2.7.0",
     "dotenv": "^17.1.0",

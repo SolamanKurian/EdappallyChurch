@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { uploadToCloudinary } from "@/lib/upload";
+import { uploadToR2 } from "@/lib/upload";
 
 interface Event {
   id: string;
@@ -80,7 +80,7 @@ export default function EditEventPage() {
   };
 
   const uploadFile = async (file: File, folder: string): Promise<string> => {
-    const result = await uploadToCloudinary(file, folder);
+    const result = await uploadToR2(file, folder);
     return result.url;
   };
 

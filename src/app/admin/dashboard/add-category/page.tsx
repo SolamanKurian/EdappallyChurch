@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, getDocs, query, where } from "firebase/firestore";
-import { uploadToCloudinary } from "@/lib/upload";
+import { uploadToR2 } from "@/lib/upload";
 
 export default function AddCategory() {
   const [categoryName, setCategoryName] = useState("");
@@ -31,7 +31,7 @@ export default function AddCategory() {
   };
 
   const uploadFile = async (file: File, folder: string): Promise<string> => {
-    const result = await uploadToCloudinary(file, folder);
+    const result = await uploadToR2(file, folder);
     return result.url;
   };
 

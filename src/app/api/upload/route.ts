@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v2 as cloudinary } from 'cloudinary';
-import { Readable } from 'stream';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: 'dhljtmmgy',
-  api_key: '535484336416449',
-  api_secret: '2yAVjGq1WiNhpSGZo_7yhMa1jmg',
+const s3 = new S3Client({
+  region: 'auto',
+  endpoint: `https://76d883acb944eccd58a9ad3d23adb293.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId:'741a2e0a30dda53fba11430e0a8435ea',
+    secretAccessKey: '86cc881714d3af7811c0c0ab0c64948620cfc995e605f020b2bdce472c54abaf'
+  },
 });
 
 export async function POST(request: NextRequest) {
+  // Confirm API route is being hit
+  console.log('UPLOAD API ROUTE CALLED');
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const folder = formData.get('folder') as string || 'church-uploads';
+    const folder = (formData.get('folder') as string) || 'church-uploads';
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -22,10 +25,10 @@ export async function POST(request: NextRequest) {
     // Validate file type - allow both audio and image files
     const isAudio = file.type.startsWith('audio/');
     const isImage = file.type.startsWith('image/');
-    
+
     if (!isAudio && !isImage) {
-      return NextResponse.json({ 
-        error: 'Only audio or image files are allowed.' 
+      return NextResponse.json({
+        error: 'Only audio or image files are allowed.'
       }, { status: 400 });
     }
 
@@ -33,8 +36,8 @@ export async function POST(request: NextRequest) {
     if (isAudio) {
       const allowedAudioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/aac'];
       if (!allowedAudioTypes.includes(file.type)) {
-        return NextResponse.json({ 
-          error: 'Only MP3, WAV, M4A, and AAC audio files are supported.' 
+        return NextResponse.json({
+          error: 'Only MP3, WAV, M4A, and AAC audio files are supported.'
         }, { status: 400 });
       }
     }
@@ -43,72 +46,44 @@ export async function POST(request: NextRequest) {
     if (isImage) {
       const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedImageTypes.includes(file.type)) {
-        return NextResponse.json({ 
-          error: 'Only JPEG, PNG, GIF, and WebP image files are supported.' 
+        return NextResponse.json({
+          error: 'Only JPEG, PNG, GIF, and WebP image files are supported.'
         }, { status: 400 });
       }
     }
 
-    console.log('=== UPLOAD DEBUG ===');
-    console.log('File received:', file.name, 'Size:', file.size, 'bytes');
-    console.log('Content-Type:', file.type);
-    console.log('Folder:', folder);
-
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const key = `${folder}/${Date.now()}_${file.name}`;
+    const contentType = file.type;
 
-    console.log('Buffer created, size:', buffer.length, 'bytes');
 
-    const result = await new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          resource_type: 'auto',
-          folder: folder,
-        },
-        (error, result) => {
-          if (error) {
-            console.error('Cloudinary upload error:', error);
-            reject(error);
-          } else {
-            console.log('Upload successful:', result);
-            resolve(result);
-          }
-        }
-      );
+   
 
-      Readable.from(buffer).pipe(uploadStream);
-    });
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: 'churchsermons',
+        Key: key,
+        Body: buffer,
+        ContentType: contentType,
+      })
+    );
+
+    // Assuming you have a Worker set up to serve public files
+    const publicUrl = `https://church-r2-worker.churchedappally.workers.dev/${key}`;
 
     return NextResponse.json({
       success: true,
-      url: (result as any).secure_url,
-      public_id: (result as any).public_id,
-      resource_type: (result as any).resource_type,
-      format: (result as any).format,
-      duration: (result as any).duration,
+      url: publicUrl,
+      key,
+      resource_type: isAudio ? 'audio' : isImage ? 'image' : 'other',
+      format: file.type.split('/')[1],
     });
-
   } catch (error) {
     console.error('Upload error:', error);
-    
-    // Handle specific error types
-    if (error instanceof Error) {
-      if (error.message.includes('413') || error.message.includes('Request Entity Too Large')) {
-        return NextResponse.json({ 
-          error: 'File too large for serverless function. Please try a smaller file or contact support.' 
-        }, { status: 413 });
-      }
-      
-      if (error.message.includes('timeout')) {
-        return NextResponse.json({ 
-          error: 'Upload timeout. Please try again with a smaller file.' 
-        }, { status: 408 });
-      }
-    }
-
     return NextResponse.json(
-      { 
-        error: 'Upload failed', 
+      {
+        error: 'Upload failed',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }

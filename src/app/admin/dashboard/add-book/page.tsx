@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { uploadToCloudinary } from "@/lib/upload";
+import { uploadToR2 } from "@/lib/upload";
 
 export default function AddBookPage() {
   const [formData, setFormData] = useState({
@@ -48,7 +48,7 @@ export default function AddBookPage() {
   };
 
   const uploadFile = async (file: File, folder: string): Promise<string> => {
-    const result = await uploadToCloudinary(file, folder);
+    const result = await uploadToR2(file, folder);
     return result.url;
   };
 

@@ -1,10 +1,2 @@
-import { v2 as cloudinary } from 'cloudinary';
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-export default cloudinary;
+// This file is no longer needed. Cloudinary integration has been removed in favor of Cloudflare R2.
+// You can safely delete this file.
