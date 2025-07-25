@@ -82,6 +82,14 @@ export default function AddSermonPage() {
         return;
       }
       
+      // Validate file size (max 100MB)
+      if (file.size > 100 * 1024 * 1024) {
+        setError("Audio file size must be less than 100MB");
+        setAudioFile(null);
+        if (audioInputRef.current) audioInputRef.current.value = "";
+        return;
+      }
+      
       setAudioFile(file);
       setError(""); // Clear any previous errors
     }

@@ -97,7 +97,23 @@ export default function EditSermonPage() {
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setAudioFile(e.target.files[0]);
+      const file = e.target.files[0];
+      // Validate file type
+      if (!file.type.startsWith('audio/')) {
+        setError('Please select a valid audio file (mp3, wav, etc.)');
+        setAudioFile(null);
+        if (audioInputRef.current) audioInputRef.current.value = '';
+        return;
+      }
+      // Validate file size (max 100MB)
+      if (file.size > 100 * 1024 * 1024) {
+        setError('Audio file size must be less than 100MB');
+        setAudioFile(null);
+        if (audioInputRef.current) audioInputRef.current.value = '';
+        return;
+      }
+      setAudioFile(file);
+      setError("");
     }
   };
 
