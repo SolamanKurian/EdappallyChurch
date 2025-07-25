@@ -1,3 +1,5 @@
+// For large files, use uploadDirectToR2 in clientUpload.ts for direct browser-to-R2 uploads via Worker.
+// This file is for server-side or fallback uploads only.
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const s3 = new S3Client({

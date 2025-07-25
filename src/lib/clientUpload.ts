@@ -100,3 +100,37 @@ const uploadWithoutPreset = async (
     throw new Error('Upload failed. Please try a smaller file or contact support.');
   }
 }; 
+
+// Direct upload to Cloudflare R2 via Worker
+export const uploadDirectToR2 = async (
+  file: File,
+  folder: string = 'church-uploads'
+): Promise<{ url: string; key: string; resource_type: string }> => {
+  const key = `${folder}/${Date.now()}_${file.name}`;
+  const workerUrl = `https://church-r2-worker.churchedappally.workers.dev/${key}`;
+
+  const response = await fetch(workerUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': file.type || 'application/octet-stream',
+    },
+    body: file,
+  });
+
+  if (!response.ok) {
+    let errorMessage = 'Upload failed';
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.details || 'Upload failed';
+    } catch {}
+    throw new Error(errorMessage);
+  }
+
+  // The Worker returns { success: true, key }
+  const result = await response.json();
+  return {
+    url: workerUrl, // This is the public URL for GET as well
+    key: result.key,
+    resource_type: file.type.startsWith('audio/') ? 'audio' : file.type.startsWith('image/') ? 'image' : 'other',
+  };
+}; 

@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { uploadToR2 } from "@/lib/upload";
+import { uploadDirectToR2 } from '@/lib/clientUpload';
 
 const languages = ["English", "Malayalam", "Hindi", "Tamil"];
 
@@ -88,7 +88,7 @@ export default function AddSermonPage() {
   };
 
   const uploadFile = async (file: File, folder: string): Promise<string> => {
-    const result = await uploadToR2(file, folder);
+    const result = await uploadDirectToR2(file, folder);
     return result.url;
   };
 
