@@ -14,14 +14,22 @@ interface Sermon {
   audioUrl: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  imageUrl?: string;
+}
+
 export default function SermonsListPage() {
   const [sermons, setSermons] = useState<Sermon[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
+  const [categoryImages, setCategoryImages] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     fetchSermons();
+    fetchCategoryImages();
   }, []);
 
   const fetchSermons = async () => {
@@ -40,6 +48,18 @@ export default function SermonsListPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchCategoryImages = async () => {
+    const querySnapshot = await getDocs(collection(db, "categories"));
+    const images: { [key: string]: string } = {};
+    querySnapshot.forEach(doc => {
+      const data = doc.data() as Category;
+      if (data.name && data.imageUrl) {
+        images[data.name] = data.imageUrl;
+      }
+    });
+    setCategoryImages(images);
   };
 
   const handleEdit = (sermon: Sermon) => {

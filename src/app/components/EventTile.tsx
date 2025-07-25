@@ -21,6 +21,9 @@ function getStatus(startDate: string, endDate: string) {
 function formatEventDate(startDate: string, endDate: string, isOneDay: boolean) {
   const start = new Date(startDate);
   const end = new Date(endDate);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    return '-';
+  }
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',

@@ -1,17 +1,9 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { uploadToR2 } from "@/lib/upload";
-
-const categories = [
-  "Morning Devotions",
-  "Sunday Sermon", 
-  "Guest Preach",
-  "Bible Study",
-  "Special Service"
-];
 
 const languages = ["English", "Malayalam", "Hindi", "Tamil"];
 
@@ -34,16 +26,15 @@ export default function EditSermonPage() {
     language: "",
     category: ""
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [existingImageUrl, setExistingImageUrl] = useState("");
   const [existingAudioUrl, setExistingAudioUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [sermon, setSermon] = useState<Sermon | null>(null);
+  const [categoryImage, setCategoryImage] = useState<string>("");
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const params = useParams();
@@ -62,24 +53,46 @@ export default function EditSermonPage() {
         language: sermonData.language,
         category: sermonData.category
       });
-      setExistingImageUrl(sermonData.imageUrl);
       setExistingAudioUrl(sermonData.audioUrl);
     } else {
       router.push("/admin/dashboard/sermons");
     }
   }, [router]);
 
+  useEffect(() => {
+    // Fetch categories from Firestore
+    const fetchCategories = async () => {
+      const querySnapshot = await getDocs(collection(db, 'categories'));
+      const cats = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as { id: string; name: string }[];
+      setCategories(cats);
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    // Fetch image for the current category
+    const fetchCategoryImage = async () => {
+      if (formData.category) {
+        const querySnapshot = await getDocs(collection(db, 'categories'));
+        const catDoc = querySnapshot.docs.find(doc => doc.data().name === formData.category);
+        if (catDoc) {
+          const data = catDoc.data();
+          setCategoryImage(data.imageUrl || "");
+        } else {
+          setCategoryImage("");
+        }
+      } else {
+        setCategoryImage("");
+      }
+    };
+    fetchCategoryImage();
+  }, [formData.category]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
-    }
   };
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,13 +118,7 @@ export default function EditSermonPage() {
         throw new Error("Please fill in all required fields");
       }
 
-      let imageUrl = existingImageUrl;
       let audioUrl = existingAudioUrl;
-
-      // Upload new image if selected
-      if (imageFile) {
-        imageUrl = await uploadFile(imageFile, 'sermons/images');
-      }
 
       // Upload new audio if selected
       if (audioFile) {
@@ -120,12 +127,13 @@ export default function EditSermonPage() {
 
       // Update in Firestore
       const sermonRef = doc(db, "sermons", sermonId);
-      await updateDoc(sermonRef, {
+      const updateData: any = {
         ...formData,
-        imageUrl,
         audioUrl,
         updatedAt: new Date()
-      });
+      };
+      if (sermon && sermon.imageUrl) updateData.imageUrl = sermon.imageUrl;
+      await updateDoc(sermonRef, updateData);
 
       setSuccess(true);
       
@@ -181,6 +189,13 @@ export default function EditSermonPage() {
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
+            </div>
+          )}
+
+          {/* Category image preview */}
+          {categoryImage && (
+            <div className="mb-4 flex justify-center">
+              <img src={categoryImage} alt="Category Preview" className="w-32 h-32 object-cover rounded shadow" />
             </div>
           )}
 
@@ -266,34 +281,11 @@ export default function EditSermonPage() {
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                  <option key={cat.id} value={cat.name}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Image Upload
-              </label>
-              <input
-                ref={imageInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {existingImageUrl && !imageFile && (
-                <p className="text-sm text-gray-600 mt-1">
-                  Current image: <a href={existingImageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">View current image</a>
-                </p>
-              )}
-              {imageFile && (
-                <p className="text-sm text-gray-600 mt-1">
-                  New image selected: {imageFile.name}
-                </p>
-              )}
             </div>
 
             <div>

@@ -31,10 +31,12 @@ export default function ListenPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [page, setPage] = useState(1);
+  const [categoryImages, setCategoryImages] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     fetchSermons();
     fetchCategories();
+    fetchCategoryImages();
   }, []);
 
   const fetchSermons = async () => {
@@ -94,6 +96,18 @@ export default function ListenPage() {
     } finally {
       setIsLoadingCategories(false);
     }
+  };
+
+  const fetchCategoryImages = async () => {
+    const querySnapshot = await getDocs(collection(db, 'categories'));
+    const images: { [key: string]: string } = {};
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.name && data.imageUrl) {
+        images[data.name] = data.imageUrl;
+      }
+    });
+    setCategoryImages(images);
   };
 
   // Helper for dd/mm/yyyy
@@ -181,12 +195,11 @@ export default function ListenPage() {
           <div className="col-span-full text-center text-gray-500">No sermons found.</div>
         ) : (
           paginated.map((sermon) => {
-            const cat = categories.find(c => c.name === sermon.category);
             return (
               <div key={sermon.id} className="w-[95vw] sm:w-full mx-auto">
                 <SermonTile
                   id={sermon.id}
-                  image={cat?.imageUrl || ""}
+                  image={categoryImages[sermon.category] || ''}
                   title={sermon.title}
                   date={formatDateDDMMYYYY(sermon.date)}
                   preacher={sermon.preacher}

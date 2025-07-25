@@ -449,8 +449,8 @@ export default function Home() {
                   <EventTile
                     id={event.id}
                     title={event.title}
-                    startDate={formatDateDDMMYYYY(event.startDate)}
-                    endDate={formatDateDDMMYYYY(event.endDate)}
+                    startDate={event.startDate}
+                    endDate={event.endDate}
                     isOneDay={event.isOneDay}
                     image={event.eventImageUrl}
                   />

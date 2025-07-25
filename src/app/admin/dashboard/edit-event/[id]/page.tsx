@@ -20,9 +20,13 @@ interface Event {
 export default function EditEventPage() {
   const [formData, setFormData] = useState({
     title: "",
-    date: "",
     description: "",
-    tag: "Upcoming"
+    isOneDay: true,
+    date: "",
+    startTime: "",
+    endTime: "",
+    startDate: "",
+    endDate: "",
   });
   const [eventImage, setEventImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -41,13 +45,40 @@ export default function EditEventPage() {
     // Load event data from localStorage
     const editEvent = localStorage.getItem("editEvent");
     if (editEvent) {
-      const eventData = JSON.parse(editEvent) as Event;
+      const eventData = JSON.parse(editEvent);
+      // Determine if event is one-day or multi-day
+      let isOneDay = true;
+      let date = "", startTime = "", endTime = "", startDate = "", endDate = "";
+      if (eventData.isOneDay !== undefined) {
+        isOneDay = eventData.isOneDay;
+      } else if (eventData.startDate && eventData.endDate) {
+        // If startDate and endDate are the same day, treat as one-day
+        const start = new Date(eventData.startDate);
+        const end = new Date(eventData.endDate);
+        isOneDay = start.toDateString() === end.toDateString();
+      }
+      if (isOneDay) {
+        if (eventData.startDate && eventData.endDate) {
+          const [d, st] = eventData.startDate.split('T');
+          const [, et] = eventData.endDate.split('T');
+          date = d;
+          startTime = st ? st.substring(0,5) : "";
+          endTime = et ? et.substring(0,5) : "";
+        }
+      } else {
+        startDate = eventData.startDate || "";
+        endDate = eventData.endDate || "";
+      }
       setEvent(eventData);
       setFormData({
-        title: eventData.title,
-        date: eventData.date,
-        description: eventData.description,
-        tag: eventData.tag
+        title: eventData.title || "",
+        description: eventData.description || "",
+        isOneDay,
+        date,
+        startTime,
+        endTime,
+        startDate,
+        endDate,
       });
     } else {
       router.push("/admin/dashboard/events");
@@ -55,10 +86,18 @@ export default function EditEventPage() {
   }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value, type } = e.target;
+    if (type === "checkbox" && e.target instanceof HTMLInputElement) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: (e.target as HTMLInputElement).checked
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,8 +132,18 @@ export default function EditEventPage() {
 
     try {
       // Validate required fields
-      if (!formData.title || !formData.date || !formData.description) {
+      if (!formData.title || !formData.description) {
         throw new Error("Please fill in all required fields");
+      }
+      // Validate date/time fields
+      if (formData.isOneDay) {
+        if (!formData.date || !formData.startTime || !formData.endTime) {
+          throw new Error("Please fill in the date and times for the event");
+        }
+      } else {
+        if (!formData.startDate || !formData.endDate) {
+          throw new Error("Please fill in the start and end date/time for the event");
+        }
       }
 
       if (!event) {
@@ -109,16 +158,44 @@ export default function EditEventPage() {
       if (eventImage) {
         // Upload new event image
         eventImageUrl = await uploadFile(eventImage, 'events/images');
-        setUploadProgress(60);
+        setUploadProgress(80);
       }
+
+      // Prepare event data
+      let startDate = '', endDate = '';
+      if (formData.isOneDay) {
+        // Ensure zero-padding for date and time
+        const pad = (n: string) => n.padStart(2, '0');
+        const [year, month, day] = formData.date.split('-');
+        const [startHour, startMinute] = formData.startTime.split(':');
+        const [endHour, endMinute] = formData.endTime.split(':');
+        if (year && month && day && startHour && startMinute && endHour && endMinute) {
+          startDate = `${year}-${pad(month)}-${pad(day)}T${pad(startHour)}:${pad(startMinute)}`;
+          endDate = `${year}-${pad(month)}-${pad(day)}T${pad(endHour)}:${pad(endMinute)}`;
+        }
+      } else {
+        // startDate and endDate are already datetime-local strings, ensure ISO format
+        if (formData.startDate && formData.endDate) {
+          startDate = new Date(formData.startDate).toISOString();
+          endDate = new Date(formData.endDate).toISOString();
+        }
+      }
+      if (!startDate || !endDate) {
+        throw new Error("Invalid or incomplete date/time fields");
+      }
+      const eventData = {
+        title: formData.title,
+        description: formData.description,
+        isOneDay: formData.isOneDay,
+        startDate,
+        endDate,
+        eventImageUrl,
+        updatedAt: new Date()
+      };
 
       // Update in Firestore
       const eventRef = doc(db, "events", eventId);
-      await updateDoc(eventRef, {
-        ...formData,
-        eventImageUrl,
-        updatedAt: new Date()
-      });
+      await updateDoc(eventRef, eventData);
       setUploadProgress(100);
 
       setSuccess(true);
@@ -213,34 +290,92 @@ export default function EditEventPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Date *
+                  Is One Day?
                 </label>
                 <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
+                  type="checkbox"
+                  name="isOneDay"
+                  checked={formData.isOneDay}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                  required
+                  className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tag *
-              </label>
-              <select
-                name="tag"
-                value={formData.tag}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                required
-              >
-                <option value="Upcoming">Upcoming</option>
-                <option value="Over">Over</option>
-              </select>
-            </div>
+            {formData.isOneDay ? (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Start Time *
+                    </label>
+                    <input
+                      type="time"
+                      name="startTime"
+                      value={formData.startTime}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      End Time *
+                    </label>
+                    <input
+                      type="time"
+                      name="endTime"
+                      value={formData.endTime}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                      required
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={formData.endDate}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    required
+                  />
+                </div>
+              </>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

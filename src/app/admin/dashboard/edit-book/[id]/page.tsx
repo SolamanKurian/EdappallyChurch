@@ -25,7 +25,6 @@ export default function EditBookPage() {
     language: ""
   });
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -33,7 +32,6 @@ export default function EditBookPage() {
   const [book, setBook] = useState<Book | null>(null);
   
   const coverImageRef = useRef<HTMLInputElement>(null);
-  const pdfFileRef = useRef<HTMLInputElement>(null);
   
   const router = useRouter();
   const params = useParams();
@@ -62,33 +60,21 @@ export default function EditBookPage() {
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover' | 'pdf') => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (type === 'cover') {
-      // Validate image file
-      if (!file.type.startsWith('image/')) {
-        setError("Please select a valid image file for the cover");
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        setError("Cover image must be less than 5MB");
-        return;
-      }
-      setCoverImage(file);
-    } else {
-      // Validate PDF file
-      if (file.type !== 'application/pdf') {
-        setError("Please select a valid PDF file");
-        return;
-      }
-      if (file.size > 50 * 1024 * 1024) { // 50MB limit
-        setError("PDF file must be less than 50MB");
-        return;
-      }
-      setPdfFile(file);
+    // Only handle cover image
+    // Validate image file
+    if (!file.type.startsWith('image/')) {
+      setError("Please select a valid image file for the cover");
+      return;
     }
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      setError("Cover image must be less than 5MB");
+      return;
+    }
+    setCoverImage(file);
     setError("");
   };
 
@@ -115,7 +101,6 @@ export default function EditBookPage() {
       }
 
       let coverImageUrl = book.coverImageUrl;
-      let pdfUrl = book.pdfUrl;
 
       setUploadProgress(10);
 
@@ -126,19 +111,11 @@ export default function EditBookPage() {
         setUploadProgress(40);
       }
 
-      // Upload new PDF if provided
-      if (pdfFile) {
-        // Upload new PDF
-        pdfUrl = await uploadFile(pdfFile, 'books/pdfs');
-        setUploadProgress(70);
-      }
-
       // Update in Firestore
       const bookRef = doc(db, "books", bookId);
       await updateDoc(bookRef, {
         ...formData,
         coverImageUrl,
-        pdfUrl,
         updatedAt: new Date()
       });
       setUploadProgress(100);
@@ -299,37 +276,6 @@ export default function EditBookPage() {
               {coverImage && (
                 <p className="text-sm text-green-600 mt-1">
                   New cover selected: {coverImage.name}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                PDF File
-              </label>
-              <div className="mb-2">
-                <a
-                  href={book.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-900 text-sm"
-                >
-                  View current PDF
-                </a>
-              </div>
-              <input
-                ref={pdfFileRef}
-                type="file"
-                accept=".pdf"
-                onChange={(e) => handleFileChange(e, 'pdf')}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Leave empty to keep current PDF. PDF format only. Max size: 50MB
-              </p>
-              {pdfFile && (
-                <p className="text-sm text-green-600 mt-1">
-                  New PDF selected: {pdfFile.name}
                 </p>
               )}
             </div>
