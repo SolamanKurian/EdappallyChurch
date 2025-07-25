@@ -197,8 +197,11 @@ export default function SermonPlayerPage() {
     const time = parseFloat(e.target.value);
     if (audioRef.current) {
       audioRef.current.currentTime = time;
-      setCurrentTime(time);
     }
+    if (typeof window !== 'undefined' && window.globalAudio) {
+      window.globalAudio.currentTime = time;
+    }
+    setCurrentTime(time);
   };
 
   const formatTime = (time: number) => {
