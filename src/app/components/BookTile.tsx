@@ -8,6 +8,13 @@ type BookTileProps = {
 };
 
 export default function BookTile({ cover, title, author, language }: BookTileProps) {
+  const handleWhatsAppClick = () => {
+    const phoneNumber = "+919447154450";
+    const message = `Hi, I would like to get this book "${title}"`;
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <div
       className="relative rounded-lg shadow-lg overflow-hidden flex flex-col justify-end h-72 group cursor-pointer"
@@ -20,9 +27,12 @@ export default function BookTile({ cover, title, author, language }: BookTilePro
         <div className="text-white text-lg font-semibold truncate" title={title}>{title}</div>
         <div className="text-gray-200 text-sm truncate" title={author}>{author}</div>
         <div className="text-gray-300 text-xs mb-2">{language}</div>
-        <Link href="/contact">
-          <button className="inline-block bg-black text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-900 transition text-center w-full">Get this book</button>
-        </Link>
+        <button 
+          onClick={handleWhatsAppClick}
+          className="inline-block bg-black text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-900 transition text-center w-full"
+        >
+          Get this book
+        </button>
       </div>
     </div>
   );

@@ -37,7 +37,7 @@ export default function ContactPage() {
             
             <div className="border-l-4 border-red-500 pl-3">
               <div className="font-medium">Tarrying Meeting</div>
-              <div className="text-sm text-gray-500">🗓️ Every Saturday | ⏰ 7:00 PM – 9:00 PM</div>
+              <div className="text-sm text-gray-500">🗓️ Every Saturday | ⏰ 6:00 PM – 8:00 PM</div>
             </div>
           </div>
         </div>
