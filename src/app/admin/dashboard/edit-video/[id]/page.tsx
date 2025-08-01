@@ -153,7 +153,7 @@ export default function EditVideoPage() {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   placeholder="Video sermon title"
                   required
                 />
@@ -168,7 +168,7 @@ export default function EditVideoPage() {
                   name="date"
                   value={formData.date}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   required
                 />
               </div>
@@ -183,7 +183,7 @@ export default function EditVideoPage() {
                 name="preacher"
                 value={formData.preacher}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 placeholder="Preacher name"
                 required
               />
@@ -198,7 +198,7 @@ export default function EditVideoPage() {
                 name="youtubeLink"
                 value={formData.youtubeLink}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 placeholder="https://www.youtube.com/watch?v=..."
                 required
               />

@@ -162,25 +162,34 @@ export default function ListenPage() {
     <main className="container mx-auto py-8 px-2 sm:px-4">
       <h1 className="text-3xl font-bold mb-8 text-center sm:text-left">Listen to Audio Sermons</h1>
       {/* Search and Filter */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between w-full">
-        <input
-          type="text"
-          placeholder="Search by Preacher or Title"
-          className="border rounded px-4 py-2 w-full md:w-1/3 focus:outline-none focus:ring"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-        />
-        <select
-          className="border rounded px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring"
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setPage(1);
-          }}
-        >
+      <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between w-full bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg border border-gray-700">
+        <div className="flex items-center gap-2 w-full md:w-1/3">
+          <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by Preacher or Title"
+            className="w-full border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white bg-gray-700/80 backdrop-blur-sm placeholder-gray-400"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-2 w-full md:w-1/4">
+          <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <select
+            className="w-full border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-white bg-gray-700/80 backdrop-blur-sm"
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setPage(1);
+            }}
+          >
           <option value="All">All Categories</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.name}>
@@ -188,6 +197,7 @@ export default function ListenPage() {
             </option>
           ))}
         </select>
+        </div>
       </div>
       {/* Sermon Tiles Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-0 sm:px-0">

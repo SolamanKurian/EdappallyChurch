@@ -6,12 +6,29 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Handle scroll effect - only after component is mounted
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 50);
+    };
+
+    // Set initial scroll state
+    handleScroll();
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mounted]);
 
   const navItems = [
     { href: "/", label: "HOME" },
@@ -26,7 +43,11 @@ export default function Navbar() {
   const isActive = (href: string) => mounted && pathname === href;
 
   return (
-    <nav className="bg-transparent shadow-lg sticky top-0 z-50">
+    <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+      mounted && isScrolled 
+        ? 'bg-gray-900/90 backdrop-blur-sm shadow-lg' 
+        : 'bg-transparent'
+    }`} suppressHydrationWarning>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}

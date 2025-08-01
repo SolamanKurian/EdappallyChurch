@@ -271,7 +271,7 @@ export default function EditSermonPage() {
                   name="language"
                   value={formData.language}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   required
                 >
                   <option value="">Select Language</option>
@@ -292,7 +292,7 @@ export default function EditSermonPage() {
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 required
               >
                 <option value="">Select Category</option>

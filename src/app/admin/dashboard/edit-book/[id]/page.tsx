@@ -204,7 +204,7 @@ export default function EditBookPage() {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   placeholder="Book title"
                   required
                 />
@@ -219,7 +219,7 @@ export default function EditBookPage() {
                   name="author"
                   value={formData.author}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                   placeholder="Author name"
                   required
                 />
@@ -234,7 +234,7 @@ export default function EditBookPage() {
                 name="language"
                 value={formData.language}
                 onChange={(e) => setFormData({...formData, language: e.target.value})}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 required
               >
                 <option value="">Select Language</option>
@@ -268,7 +268,7 @@ export default function EditBookPage() {
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleFileChange(e, 'cover')}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               />
               <p className="text-sm text-gray-500 mt-1">
                 Leave empty to keep current cover. Accepted formats: JPG, PNG, GIF. Max size: 5MB

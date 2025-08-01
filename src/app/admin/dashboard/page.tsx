@@ -11,6 +11,7 @@ interface DashboardStats {
   books: number;
   events: number;
   categories: number;
+  notices: number;
   total: number;
 }
 
@@ -23,6 +24,7 @@ export default function AdminDashboard() {
     books: 0,
     events: 0,
     categories: 0,
+    notices: 0,
     total: 0
   });
   const [loading, setLoading] = useState(true);
@@ -43,12 +45,13 @@ export default function AdminDashboard() {
       setLoading(true);
       
       // Fetch counts from all collections
-      const [sermonsSnapshot, videosSnapshot, booksSnapshot, eventsSnapshot, categoriesSnapshot] = await Promise.all([
+      const [sermonsSnapshot, videosSnapshot, booksSnapshot, eventsSnapshot, categoriesSnapshot, noticesSnapshot] = await Promise.all([
         getDocs(collection(db, "sermons")),
         getDocs(collection(db, "videos")),
         getDocs(collection(db, "books")),
         getDocs(collection(db, "events")),
-        getDocs(collection(db, "categories"))
+        getDocs(collection(db, "categories")),
+        getDocs(collection(db, "notices"))
       ]);
 
       const newStats = {
@@ -57,7 +60,8 @@ export default function AdminDashboard() {
         books: booksSnapshot.size,
         events: eventsSnapshot.size,
         categories: categoriesSnapshot.size,
-        total: sermonsSnapshot.size + videosSnapshot.size + booksSnapshot.size + eventsSnapshot.size + categoriesSnapshot.size
+        notices: noticesSnapshot.size,
+        total: sermonsSnapshot.size + videosSnapshot.size + booksSnapshot.size + eventsSnapshot.size + categoriesSnapshot.size + noticesSnapshot.size
       };
 
       setStats(newStats);
@@ -203,6 +207,28 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            <div className="bg-teal-50 p-6 rounded-lg border border-teal-200">
+              <h3 className="text-lg font-semibold text-teal-800 mb-2">Notice Board</h3>
+              <p className="text-teal-600 mb-2">Manage church announcements and notices</p>
+              <p className="text-teal-700 font-semibold mb-4">
+                {loading ? "Loading..." : `${stats.notices} notice${stats.notices !== 1 ? 's' : ''}`}
+              </p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => router.push("/admin/dashboard/notice-board")}
+                  className="w-full bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition text-sm"
+                >
+                  Manage Notices
+                </button>
+                <button
+                  onClick={() => router.push("/admin/dashboard/passcode")}
+                  className="w-full bg-teal-100 text-teal-700 py-2 px-4 rounded hover:bg-teal-200 transition text-sm"
+                >
+                  Manage Passcode
+                </button>
+              </div>
+            </div>
+
             <div className="bg-orange-50 p-6 rounded-lg border border-orange-200">
               <h3 className="text-lg font-semibold text-orange-800 mb-2">Quick Stats</h3>
               <div className="space-y-2 text-sm">
@@ -211,6 +237,7 @@ export default function AdminDashboard() {
                 <p className="text-orange-600">Books: <span className="font-semibold">{loading ? "..." : stats.books}</span></p>
                 <p className="text-orange-600">Events: <span className="font-semibold">{loading ? "..." : stats.events}</span></p>
                 <p className="text-orange-600">Categories: <span className="font-semibold">{loading ? "..." : stats.categories}</span></p>
+                <p className="text-orange-600">Notices: <span className="font-semibold">{loading ? "..." : stats.notices}</span></p>
               </div>
             </div>
           </div>

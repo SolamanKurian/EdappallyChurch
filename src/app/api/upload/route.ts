@@ -3,10 +3,10 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const s3 = new S3Client({
   region: 'auto',
-  endpoint: `https://76d883acb944eccd58a9ad3d23adb293.r2.cloudflarestorage.com`,
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId:'741a2e0a30dda53fba11430e0a8435ea',
-    secretAccessKey: '86cc881714d3af7811c0c0ab0c64948620cfc995e605f020b2bdce472c54abaf'
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
   },
 });
 

@@ -220,10 +220,10 @@ export default function SermonPlayerPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading sermon...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+          <p className="mt-4 text-gray-300">Loading sermon...</p>
         </div>
       </div>
     );
@@ -231,13 +231,13 @@ export default function SermonPlayerPage() {
 
   if (error || !sermon) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Sermon Not Found</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h1 className="text-2xl font-bold text-white mb-4">Sermon Not Found</h1>
+          <p className="text-gray-300 mb-6">{error}</p>
           <button
             onClick={() => router.push("/")}
-            className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
+            className="bg-yellow-600 text-gray-900 px-6 py-2 rounded-lg hover:bg-yellow-500 transition font-semibold"
           >
             Back to Home
           </button>
@@ -247,12 +247,12 @@ export default function SermonPlayerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-black py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="mb-6 flex items-center text-gray-600 hover:text-gray-800 transition"
+          className="mb-6 flex items-center text-gray-300 hover:text-yellow-400 transition"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -261,11 +261,11 @@ export default function SermonPlayerPage() {
         </button>
 
         {/* Sermon Content */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden border border-gray-700">
           {/* Image/Background */}
-          <div className="relative h-64 md:h-96 bg-gray-200" style={categoryImage ? { backgroundImage: `url('${categoryImage}')`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+          <div className="relative h-64 md:h-96 bg-gray-800" style={categoryImage ? { backgroundImage: `url('${categoryImage}')`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
             {/* Overlay for readability */}
-            {categoryImage && <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent z-0" />}
+            {categoryImage && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-0" />}
             {/* Fallback to sermon image if no category image */}
             {!categoryImage && sermon.imageUrl ? (
               <Image
@@ -277,7 +277,7 @@ export default function SermonPlayerPage() {
               />
             ) : null}
             {!categoryImage && !sermon.imageUrl && (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
+              <div className="w-full h-full flex items-center justify-center text-gray-500">
                 <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
                 </svg>
@@ -286,12 +286,12 @@ export default function SermonPlayerPage() {
             {/* Category and Language badges */}
             <div className="absolute top-4 left-4 flex gap-2 z-10">
               {sermon.category && (
-                <span className="bg-black text-white px-3 py-1 rounded-full text-sm font-semibold">
+                <span className="bg-yellow-600 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
                   {sermon.category}
                 </span>
               )}
               {sermon.language && (
-                <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm">
+                <span className="bg-gray-700 text-white px-3 py-1 rounded-full text-sm border border-gray-600">
                   {sermon.language}
                 </span>
               )}
@@ -300,13 +300,13 @@ export default function SermonPlayerPage() {
 
           {/* Audio Player */}
           <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">{sermon.title}</h1>
-            <p className="text-lg text-gray-600 mb-1">{sermon.preacher}</p>
-            <p className="text-gray-500 mb-6">{formatDate(sermon.date)}</p>
+            <h1 className="text-3xl font-bold text-white mb-2">{sermon.title}</h1>
+            <p className="text-lg text-yellow-400 mb-1 font-medium">{sermon.preacher}</p>
+            <p className="text-gray-400 mb-6">{formatDate(sermon.date)}</p>
 
             {/* Progress Bar */}
             <div className="mb-4">
-              <div className="flex justify-between text-sm text-gray-500 mb-2">
+              <div className="flex justify-between text-sm text-gray-400 mb-2">
                 <span>{formatTime(currentTime)}</span>
                 <span>{formatTime(duration)}</span>
               </div>
@@ -316,9 +316,9 @@ export default function SermonPlayerPage() {
                 max={duration || 0}
                 value={currentTime}
                 onChange={handleSeek}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                 style={{
-                  background: `linear-gradient(to right, #000000 0%, #000000 ${(currentTime / duration) * 100}%, #e5e7eb ${(currentTime / duration) * 100}%, #e5e7eb 100%)`
+                  background: `linear-gradient(to right, #eab308 0%, #eab308 ${(currentTime / duration) * 100}%, #374151 ${(currentTime / duration) * 100}%, #374151 100%)`
                 }}
               />
             </div>
@@ -326,7 +326,7 @@ export default function SermonPlayerPage() {
             {/* Play/Pause Button */}
             <button
               onClick={handlePlayPause}
-              className="w-full bg-black text-white py-4 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-3 text-lg"
+              className="w-full bg-yellow-600 text-gray-900 py-4 rounded-lg font-semibold hover:bg-yellow-500 transition flex items-center justify-center gap-3 text-lg shadow-lg"
             >
               {isPlaying ? (
                 <>
@@ -381,7 +381,7 @@ export default function SermonPlayerPage() {
                     window.open(sermon.audioUrl, '_blank');
                   }
                 }}
-                className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2"
+                className="flex-1 bg-gray-800 text-white py-3 rounded-lg font-medium hover:bg-gray-700 transition flex items-center justify-center gap-2 border border-gray-600"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -418,7 +418,7 @@ export default function SermonPlayerPage() {
                     });
                   }
                 }}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                className="flex-1 bg-gray-700 text-white py-3 rounded-lg font-medium hover:bg-gray-600 transition flex items-center justify-center gap-2 border border-gray-500"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />

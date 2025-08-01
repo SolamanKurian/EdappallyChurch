@@ -76,25 +76,35 @@ export default function ReadPage() {
     <main className="container mx-auto py-8 px-2 sm:px-4">
       <h1 className="text-3xl font-bold mb-8 text-center sm:text-left">Read Church Books</h1>
       {/* Search and Filter */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between w-full">
-        <input
-          type="text"
-          placeholder="Search by Book Name or Author"
-          className="border rounded px-4 py-2 w-full md:w-1/3 focus:outline-none focus:ring"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select
-          className="border rounded px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring"
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-        >
+      <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between w-full bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg border border-gray-700">
+        <div className="flex items-center gap-2 w-full md:w-1/3">
+          <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by Book Name or Author"
+            className="w-full border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white bg-gray-700/80 backdrop-blur-sm placeholder-gray-400"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center gap-2 w-full md:w-1/4">
+          <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <select
+            className="w-full border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white bg-gray-700/80 backdrop-blur-sm"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
           {languages.map((lang) => (
             <option key={lang} value={lang}>
               {lang}
             </option>
           ))}
         </select>
+        </div>
       </div>
       {/* Books Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 px-0 sm:px-0">

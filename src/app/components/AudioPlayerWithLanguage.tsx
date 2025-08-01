@@ -20,7 +20,7 @@ export default function AudioPlayerWithLanguage() {
         {playing ? "Pause" : "Play"}
       </button>
       <select
-        className="border rounded px-3 py-2 focus:outline-none focus:ring"
+        className="border rounded px-3 py-2 focus:outline-none focus:ring text-black"
         value={lang}
         onChange={(e) => setLang(e.target.value)}
       >
