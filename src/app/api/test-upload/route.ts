@@ -10,8 +10,10 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('=== TEST UPLOAD DEBUG ===');
-    console.log('Request headers:', Object.fromEntries(request.headers.entries()));
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== TEST UPLOAD DEBUG ===');
+      console.log('Request headers:', Object.fromEntries(request.headers.entries()));
+    }
     
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -20,8 +22,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    console.log('File received:', file.name, 'Size:', file.size, 'bytes');
-    console.log('Content-Type:', file.type);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('File received:', file.name, 'Size:', file.size, 'bytes');
+      console.log('Content-Type:', file.type);
+    }
 
     // Just return success for now to test the connection
     return NextResponse.json({
@@ -33,7 +37,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Test upload error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Test upload error:', error);
+    }
     return NextResponse.json(
       { 
         error: 'Test upload failed', 

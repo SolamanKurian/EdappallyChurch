@@ -103,7 +103,7 @@ export default function NoticeBoardPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-black py-8">
+      <main className="min-h-screen bg-black py-4 sm:py-8">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
@@ -116,13 +116,13 @@ export default function NoticeBoardPage() {
 
   if (!authenticated) {
     return (
-      <main className="min-h-screen bg-black py-8">
+      <main className="min-h-screen bg-black py-4 sm:py-8">
         <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto bg-gray-900 shadow-2xl rounded-lg p-8 border border-gray-700">
+          <div className="max-w-md mx-auto bg-gray-900 shadow-2xl rounded-lg p-6 sm:p-8 border border-gray-700">
             <div className="text-center mb-6">
               <div className="text-4xl mb-4">📋</div>
-              <h1 className="text-3xl font-bold text-white mb-2">Church Notice Board</h1>
-              <p className="text-gray-400">Enter the passcode to access church notices</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Church Notice Board</h1>
+              <p className="text-gray-400 text-sm sm:text-base">Enter the passcode to access church notices</p>
             </div>
 
             <form onSubmit={handlePasscodeSubmit} className="space-y-4">
@@ -170,78 +170,107 @@ export default function NoticeBoardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black py-8">
+    <main className="min-h-screen bg-black py-4 sm:py-8">
       <div className="container mx-auto px-4">
-        <div className="bg-gray-900 shadow-2xl rounded-lg p-8 border border-gray-700">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="text-3xl">📋</div>
-                <h1 className="text-3xl font-bold text-white">Church Notice Board</h1>
+        {/* Header Section - Mobile Responsive */}
+        <div className="bg-gray-900 shadow-2xl rounded-lg p-4 sm:p-8 border border-gray-700 mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="text-2xl sm:text-3xl">📋</div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white">Church Notice Board</h1>
+                <p className="text-gray-400 text-sm sm:text-base">Latest church announcements and notices</p>
               </div>
-              <p className="text-gray-400">Latest church announcements and notices</p>
             </div>
-            <div className="flex gap-3">
+            
+            {/* Action Buttons - Small and Mobile Friendly */}
+            <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition font-medium"
+                className="bg-red-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-red-700 transition font-medium text-sm"
               >
                 Logout
               </button>
               <button
                 onClick={() => router.push("/")}
-                className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition font-medium"
+                className="bg-gray-700 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-600 transition font-medium text-sm"
               >
-                Back to Home
+                Home
               </button>
             </div>
           </div>
+        </div>
 
+        {/* Notices Section */}
+        <div className="space-y-4 sm:space-y-6">
           {notices.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">📝</div>
-              <p className="text-gray-400 text-lg">No notices available at the moment.</p>
+            <div className="bg-gray-900 shadow-2xl rounded-lg p-8 border border-gray-700">
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">📝</div>
+                <p className="text-gray-400 text-lg">No notices available at the moment.</p>
+              </div>
             </div>
           ) : (
-            <div className="space-y-6">
-              {notices.map((notice) => {
-                const dateInfo = formatDate(notice.date);
-                const isRecent = isRecentNotice(notice.date);
-                
-                return (
-                  <div 
-                    key={notice.id} 
-                    className={`border rounded-lg p-6 transition-all duration-300 hover:shadow-xl ${
+            notices.map((notice) => {
+              const dateInfo = formatDate(notice.date);
+              const isRecent = isRecentNotice(notice.date);
+              
+              return (
+                <div 
+                  key={notice.id} 
+                  className={`border rounded-lg p-4 sm:p-6 transition-all duration-300 hover:shadow-xl ${
+                    isRecent 
+                      ? 'border-yellow-500/50 bg-gradient-to-r from-gray-900 to-gray-800 shadow-lg shadow-yellow-500/10' 
+                      : 'border-gray-700 bg-gray-800 hover:bg-gray-750'
+                  }`}
+                >
+                  {/* Notice Header - Mobile Responsive */}
+                  <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                    {/* Main Content Area */}
+                    <div className="flex-1">
+                      {/* Title and Date Row - Mobile */}
+                      <div className="flex items-start justify-between gap-3 mb-2 sm:mb-2">
+                        <h3 className="text-lg sm:text-xl font-semibold text-white flex-1">{notice.title}</h3>
+                        {/* Date - Near title on mobile, side panel on desktop */}
+                        <div className={`flex flex-col items-center p-2 rounded-lg min-w-[60px] sm:hidden ${
+                          isRecent 
+                            ? 'bg-yellow-600/20 text-yellow-400 border border-yellow-600/30' 
+                            : 'bg-gray-700/50 text-gray-400 border border-gray-600/30'
+                        }`}>
+                          <span className="text-sm font-medium">{dateInfo.day}</span>
+                          <span className="text-xs font-medium uppercase">{dateInfo.month}</span>
+                          <span className="text-xs opacity-75">{dateInfo.year}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="text-gray-300 whitespace-pre-wrap leading-relaxed text-sm sm:text-base">
+                        {notice.content}
+                      </div>
+                    </div>
+                    
+                    {/* Date Side Panel - Desktop Only */}
+                    <div className={`hidden sm:flex flex-col items-center p-2 sm:p-3 rounded-lg min-w-[80px] self-start ${
                       isRecent 
-                        ? 'border-yellow-500/50 bg-gradient-to-r from-gray-900 to-gray-800 shadow-lg shadow-yellow-500/10' 
-                        : 'border-gray-700 bg-gray-800 hover:bg-gray-750'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-xl font-semibold text-white pr-4">{notice.title}</h3>
-                      <div className={`flex flex-col items-center p-3 rounded-lg min-w-[80px] ${
-                        isRecent 
-                          ? 'bg-yellow-600 text-gray-900' 
-                          : 'bg-gray-700 text-gray-300'
-                      }`}>
-                        <span className="text-lg font-bold">{dateInfo.day}</span>
-                        <span className="text-xs font-medium uppercase">{dateInfo.month}</span>
-                        <span className="text-xs">{dateInfo.year}</span>
-                      </div>
+                        ? 'bg-yellow-600/20 text-yellow-400 border border-yellow-600/30' 
+                        : 'bg-gray-700/50 text-gray-400 border border-gray-600/30'
+                    }`}>
+                      <span className="text-sm sm:text-base font-medium">{dateInfo.day}</span>
+                      <span className="text-xs font-medium uppercase">{dateInfo.month}</span>
+                      <span className="text-xs opacity-75">{dateInfo.year}</span>
                     </div>
-                    <div className="text-gray-300 whitespace-pre-wrap leading-relaxed">
-                      {notice.content}
-                    </div>
-                    {isRecent && (
-                      <div className="mt-3 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                        <span className="text-yellow-400 text-sm font-medium">Recent Notice</span>
-                      </div>
-                    )}
                   </div>
-                );
-              })}
-            </div>
+                  
+                  {/* Recent Notice Indicator - At the end of card */}
+                  {isRecent && (
+                    <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-600/30">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                      <span className="text-yellow-400 text-sm font-medium">Recent Notice</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       </div>

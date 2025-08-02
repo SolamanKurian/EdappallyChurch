@@ -15,14 +15,20 @@ export default function AdminLoginPage() {
   useEffect(() => {
     if (!auth) return;
     // Test Firebase connection
-    console.log("Firebase Auth initialized:", auth);
-    console.log("Current auth state:", auth.currentUser);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Firebase Auth initialized:", auth);
+      console.log("Current auth state:", auth.currentUser);
+    }
     
     // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed:", user);
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Auth state changed:", user);
+      }
       if (user) {
-        console.log("User is signed in:", user.email);
+        if (process.env.NODE_ENV === 'development') {
+          console.log("User is signed in:", user.email);
+        }
         // If user is already signed in via Firebase, create session
         localStorage.setItem("adminSession", JSON.stringify({
           uid: user.uid,
@@ -32,7 +38,9 @@ export default function AdminLoginPage() {
         router.push("/admin/dashboard");
         return;
       } else {
-        console.log("User is signed out");
+        if (process.env.NODE_ENV === 'development') {
+          console.log("User is signed out");
+        }
       }
     });
 
@@ -46,15 +54,21 @@ export default function AdminLoginPage() {
         const isExpired = Date.now() - sessionData.timestamp > 24 * 60 * 60 * 1000;
         
         if (!isExpired) {
-          console.log("Valid session found, redirecting to dashboard");
+          if (process.env.NODE_ENV === 'development') {
+            console.log("Valid session found, redirecting to dashboard");
+          }
           router.push("/admin/dashboard");
           return;
         } else {
-          console.log("Session expired, removing");
+          if (process.env.NODE_ENV === 'development') {
+            console.log("Session expired, removing");
+          }
           localStorage.removeItem("adminSession");
         }
       } catch (error) {
-        console.log("Invalid session data, removing");
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Invalid session data, removing");
+        }
         localStorage.removeItem("adminSession");
       }
     }
@@ -96,15 +110,19 @@ export default function AdminLoginPage() {
     }
 
     try {
-      console.log("Attempting login with email:", email);
-      console.log("Firebase Auth object:", auth);
-      console.log("Current Firebase user before login:", auth.currentUser);
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Attempting login with email:", email);
+        console.log("Firebase Auth object:", auth);
+        console.log("Current Firebase user before login:", auth.currentUser);
+      }
       
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      console.log("Login successful for user:", user.email);
-      console.log("User UID:", user.uid);
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Login successful for user:", user.email);
+        console.log("User UID:", user.uid);
+      }
       
       // Store session in localStorage
       const sessionData = {
@@ -113,17 +131,23 @@ export default function AdminLoginPage() {
         timestamp: Date.now()
       };
       
-      console.log("Storing session data:", sessionData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Storing session data:", sessionData);
+      }
       localStorage.setItem("adminSession", JSON.stringify(sessionData));
       
-      console.log("Session stored, redirecting to dashboard");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Session stored, redirecting to dashboard");
+      }
       
       // Redirect to admin dashboard
       router.push("/admin/dashboard");
     } catch (error: any) {
-      console.error("Login error details:", error);
-      console.error("Error code:", error.code);
-      console.error("Error message:", error.message);
+      if (process.env.NODE_ENV === 'development') {
+        console.error("Login error details:", error);
+        console.error("Error code:", error.code);
+        console.error("Error message:", error.message);
+      }
       
       const errorMessage = getErrorMessage(error.code);
       setError(errorMessage);

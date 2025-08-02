@@ -84,8 +84,10 @@ export default function Home() {
       return;
     }
 
-    console.log("Network status:", navigator.onLine ? "Online" : "Offline");
-    console.log("User agent:", navigator.userAgent);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Network status:", navigator.onLine ? "Online" : "Offline");
+      console.log("User agent:", navigator.userAgent);
+    }
 
     fetchSermons();
     fetchVideos();
@@ -97,8 +99,10 @@ export default function Home() {
   const fetchSermons = async () => {
     if (!db) return;
     try {
-      console.log("Fetching sermons from Firestore...");
-      console.log("Firebase config:", { projectId: "edchurch-6ea6c" });
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Fetching sermons from Firestore...");
+        console.log("Firebase config:", { projectId: "edchurch-6ea6c" });
+      }
 
       const sermonsQuery = query(
         collection(db, "sermons"),
@@ -107,14 +111,18 @@ export default function Home() {
       );
       
       const querySnapshot = await getDocs(sermonsQuery);
-      console.log("Sermons query result:", querySnapshot.docs.length, "documents");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Sermons query result:", querySnapshot.docs.length, "documents");
+      }
       
       const sermonsData = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Sermon[];
       
-      console.log("Processed sermons data:", sermonsData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Processed sermons data:", sermonsData);
+      }
       setSermons(sermonsData);
     } catch (error) {
       console.error("Error fetching sermons:", error);
@@ -126,7 +134,9 @@ export default function Home() {
   const fetchVideos = async () => {
     if (!db) return;
     try {
-      console.log("Fetching videos from Firestore...");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Fetching videos from Firestore...");
+      }
       
       const videosQuery = query(
         collection(db, "videos"),
@@ -135,7 +145,9 @@ export default function Home() {
       );
       
       const querySnapshot = await getDocs(videosQuery);
-      console.log("Videos query result:", querySnapshot.docs.length, "documents");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Videos query result:", querySnapshot.docs.length, "documents");
+      }
       
       const videosData = querySnapshot.docs.map(doc => ({
         id: doc.id,

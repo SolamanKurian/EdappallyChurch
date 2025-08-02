@@ -6,9 +6,11 @@ export const uploadDirectToCloudinary = async (
   folder: string = 'church-uploads'
 ): Promise<{ url: string; public_id: string; resource_type: string }> => {
   
-  console.log('=== DIRECT CLOUDINARY UPLOAD ===');
-  console.log('File:', file.name, 'Size:', file.size, 'Type:', file.type);
-  console.log('Folder:', folder);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('=== DIRECT CLOUDINARY UPLOAD ===');
+    console.log('File:', file.name, 'Size:', file.size, 'Type:', file.type);
+    console.log('Folder:', folder);
+  }
 
   try {
     // Create form data for direct Cloudinary upload
@@ -24,7 +26,9 @@ export const uploadDirectToCloudinary = async (
       formData.append('folder', folder);
     }
 
-    console.log('Using upload preset:', uploadPreset);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Using upload preset:', uploadPreset);
+    }
 
     // Upload directly to Cloudinary from browser
     const response = await fetch('https://api.cloudinary.com/v1_1/dhljtmmgy/auto/upload', {
@@ -32,15 +36,21 @@ export const uploadDirectToCloudinary = async (
       body: formData,
     });
 
-    console.log('Cloudinary response status:', response.status);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Cloudinary response status:', response.status);
+    }
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log('Cloudinary error:', errorData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Cloudinary error:', errorData);
+      }
       
       // If upload preset not found, try without preset
       if (errorData.error?.message?.includes('upload preset')) {
-        console.log('Upload preset not found, trying without preset...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Upload preset not found, trying without preset...');
+        }
         return uploadWithoutPreset(file, folder);
       }
       
@@ -48,7 +58,9 @@ export const uploadDirectToCloudinary = async (
     }
 
     const result = await response.json();
-    console.log('Cloudinary upload successful:', result);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Cloudinary upload successful:', result);
+    }
 
     return {
       url: result.secure_url,
@@ -56,7 +68,9 @@ export const uploadDirectToCloudinary = async (
       resource_type: result.resource_type,
     };
   } catch (error) {
-    console.error('Direct upload error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Direct upload error:', error);
+    }
     throw error;
   }
 };
@@ -67,7 +81,9 @@ const uploadWithoutPreset = async (
   folder: string
 ): Promise<{ url: string; public_id: string; resource_type: string }> => {
   
-  console.log('=== FALLBACK UPLOAD WITHOUT PRESET ===');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('=== FALLBACK UPLOAD WITHOUT PRESET ===');
+  }
   
   try {
     // Use the API route as fallback for smaller files
@@ -80,7 +96,9 @@ const uploadWithoutPreset = async (
       body: formData,
     });
 
-    console.log('API fallback response status:', response.status);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('API fallback response status:', response.status);
+    }
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -88,7 +106,9 @@ const uploadWithoutPreset = async (
     }
 
     const result = await response.json();
-    console.log('API fallback upload successful:', result);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('API fallback upload successful:', result);
+    }
 
     return {
       url: result.url,
@@ -96,7 +116,9 @@ const uploadWithoutPreset = async (
       resource_type: result.resource_type,
     };
   } catch (error) {
-    console.error('Fallback upload error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Fallback upload error:', error);
+    }
     throw new Error('Upload failed. Please try a smaller file or contact support.');
   }
 }; 
