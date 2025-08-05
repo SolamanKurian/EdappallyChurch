@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { uploadToR2 } from "@/lib/upload";
+import { uploadDirectToR2 } from "@/lib/clientUpload";
 
 export default function AddEventPage() {
   const [formData, setFormData] = useState({
@@ -58,7 +58,7 @@ export default function AddEventPage() {
   };
 
   const uploadFile = async (file: File, folder: string): Promise<string> => {
-    const result = await uploadToR2(file, folder);
+    const result = await uploadDirectToR2(file, folder);
     return result.url;
   };
 

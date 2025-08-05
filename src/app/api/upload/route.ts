@@ -13,6 +13,12 @@ const s3 = new S3Client({
 export async function POST(request: NextRequest) {
   // Confirm API route is being hit
   console.log('UPLOAD API ROUTE CALLED');
+  
+  // Debug environment variables
+  console.log('R2_ACCOUNT_ID:', process.env.R2_ACCOUNT_ID ? 'Set' : 'Missing');
+  console.log('R2_ACCESS_KEY_ID:', process.env.R2_ACCESS_KEY_ID ? 'Set' : 'Missing');
+  console.log('R2_SECRET_ACCESS_KEY:', process.env.R2_SECRET_ACCESS_KEY ? 'Set' : 'Missing');
+  
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -57,8 +63,14 @@ export async function POST(request: NextRequest) {
     const key = `${folder}/${Date.now()}_${file.name}`;
     const contentType = file.type;
 
-
-   
+    console.log('File details:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      folder,
+      key,
+      contentType
+    });
 
     await s3.send(
       new PutObjectCommand({
@@ -81,6 +93,11 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Upload error:', error);
+    console.error('Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
     return NextResponse.json(
       {
         error: 'Upload failed',
