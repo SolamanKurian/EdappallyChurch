@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Disallow admin pages from being indexed
+Disallow: /admin/
+Disallow: /api/
+Disallow: /test-firebase
+
+# Allow important pages
+Allow: /about
+Allow: /contact
+Allow: /attend
+Allow: /listen
+Allow: /watch
+Allow: /read
+Allow: /notice-board
+
+# Sitemap location
+Sitemap: https://edappallychurch.com/sitemap.xml
+
+# Crawl delay (optional - helps with server load)
+Crawl-delay: 1 

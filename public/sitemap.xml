@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://edappallychurch.com/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- About Us Page -->
+  <url>
+    <loc>https://edappallychurch.com/about</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Contact Page -->
+  <url>
+    <loc>https://edappallychurch.com/contact</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Attend/Visit Church Page -->
+  <url>
+    <loc>https://edappallychurch.com/attend</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Listen to Sermons Page -->
+  <url>
+    <loc>https://edappallychurch.com/listen</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Watch Videos Page -->
+  <url>
+    <loc>https://edappallychurch.com/watch</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Read Books Page -->
+  <url>
+    <loc>https://edappallychurch.com/read</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Notice Board Page -->
+  <url>
+    <loc>https://edappallychurch.com/notice-board</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Admin Login Page -->
+  <url>
+    <loc>https://edappallychurch.com/admin</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Login Page -->
+  <url>
+    <loc>https://edappallychurch.com/admin/login</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Dashboard -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Dashboard Passcode -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/passcode</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Add Sermon -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/add-sermon</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Add Video -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/add-video</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Add Book -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/add-book</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Add Event -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/add-event</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Add Category -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/add-category</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin View Sermons -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/sermons</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin View Videos -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/videos</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin View Books -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/books</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin View Events -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/events</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin View Categories -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/categories</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Admin Notice Board -->
+  <url>
+    <loc>https://edappallychurch.com/admin/dashboard/notice-board</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Test Firebase Page -->
+  <url>
+    <loc>https://edappallychurch.com/test-firebase</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.2</priority>
+  </url>
+</urlset> 
